@@ -11,7 +11,7 @@ const DefaultLayout: FC<Props> = ({ children }): JSX.Element => {
   return (
     <div className=" min-h-screen wrapper overflow-x-hidden flex flex-col bg-white ">
       <Header />
-      <div className="grid grid-cols-12 flex-1">
+      <div className="flex-1">
         <Container>
           <main className="mt-24 flex flex-col relative">{children}</main>
         </Container>
