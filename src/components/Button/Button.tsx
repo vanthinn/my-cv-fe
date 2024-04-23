@@ -8,6 +8,7 @@ export enum TypesButton {
   'approve',
   'blue',
   'cancel',
+  'black',
 }
 
 interface IButton
@@ -29,12 +30,11 @@ const Button = ({ typeButton = 'primary', loading, ...props }: IButton) =>
       switch (typeButton) {
         case TypesButton[1]: {
           result =
-            'transition-all duration-500 bg-transparent hover:bg-primary-500 text-primary-400 font-semibold hover:text-white py-2 px-4 border border-primary-400 hover:border-transparent rounded'
+            'transition-all duration-300 border border-gray-400 py-2 px-4 rounded-md font-semibold'
           break
         }
         case TypesButton[2]: {
-          result =
-            'transition-all duration-500 bg-primary-500 text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed'
+          result = 'transition-all duration-500 hover:transform hover:translate-y-[-4px] '
           break
         }
         case TypesButton[3]: {
@@ -67,10 +67,15 @@ const Button = ({ typeButton = 'primary', loading, ...props }: IButton) =>
             'transition-all duration-300 bg-[#efebeb] hover:bg-[#f4f4f4] text-black font-semibold py-1.5 px-4 border border-[#f4f4f4] rounded-2xl shadow focus:outline-none focus:ring-0'
           break
         }
+        case TypesButton[9]: {
+          result =
+            'transition-all duration-300 bg-[#000] hover:bg-[#fff] text-[#fff] hover:text-[#000] font-semibold py-1.5 px-4 rounded-md shadow focus:outline-none focus:ring-0'
+          break
+        }
         case TypesButton[0]:
         default: {
           result =
-            'transition-all duration-300 bg-[#154dc5] hover:bg-[#1a55d1] text-white font-semibold py-1.5 px-4 border border-[#3367d6] rounded-2xl shadow focus:outline-none focus:ring-0'
+            'transition-all duration-300 bg-[#154dc5] hover:bg-[#1a55d1] text-white font-semibold py-1.5 px-4 border border-[#3367d6] rounded-md shadow focus:outline-none focus:ring-0'
           break
         }
       }
