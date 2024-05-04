@@ -4,6 +4,9 @@ import Button from '../../../components/Button'
 import { Container } from '../../Container/Container'
 import { HiArrowSmRight } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
+import AvatarHeader from '../AvatarHeader/AvatarHeader'
+import { Tooltip } from '@mui/material'
+import SmsIcon from '@mui/icons-material/Sms'
 
 interface Props {}
 
@@ -36,7 +39,7 @@ const Header: FC<Props> = (props): JSX.Element => {
     navigate(path)
   }
   return (
-    <div className="fixed top-0 right-0 left-0  h-24  shadow-md bg-gradient-to-r from-gray-100 to-sky-100">
+    <div className="fixed top-0 right-0 left-0  h-24 z-[999]  shadow-md bg-gradient-to-r from-gray-100 to-sky-100">
       <Container>
         <div className="flex justify-between items-center ">
           <div className="flex items-center">
@@ -62,18 +65,33 @@ const Header: FC<Props> = (props): JSX.Element => {
             </ul>
           </div>
 
-          <div className="flex gap-6">
+          {/* <div className="flex gap-6">
             <Button
               typeButton="outline"
               className="hover:transform hover:translate-y-[-4px]">
               Sign up
             </Button>
-            <Button className="hover:transform hover:translate-y-[-4px] ">Login</Button>
+            <Button
+              onClick={() => navigate('/auth/login')}
+              className="hover:transform hover:translate-y-[-4px] ">
+              Login
+            </Button>
             <Button
               typeButton="black"
               className="hover:transform hover:translate-y-[-4px] ">
               For Employers <HiArrowSmRight className="ml-2 text-xl" />
             </Button>
+          </div> */}
+
+          <div className="flex gap-4 items-center">
+            <Tooltip title={<h1 className="text-sm">Message</h1>}>
+              <SmsIcon
+                onClick={() => navigate('/message')}
+                className=" text-[#5ba5e9] cursor-pointer"
+                sx={{ fontSize: 32 }}
+              />
+            </Tooltip>
+            <AvatarHeader />
           </div>
         </div>
       </Container>

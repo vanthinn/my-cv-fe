@@ -5,7 +5,9 @@ export const ROUTER_USER = Object.freeze({
     HOME: '/',
     JOB_DETAIL: 'jobs/"id',
     MANAGEMENT_CV: '/manager-cv',
+    NEW_RESUME: '/new-cv',
     CV_DETAIL: '/cv/:id',
+    PREVIEW_RESUME: '/preview-cv',
     COMPANY: '/company',
     COMPANY_DETAIL: '/company/:id',
     BLOG: '/blog',
@@ -78,5 +80,81 @@ export const LIST_COUNTRY = [
     { label: "Vĩnh Phúc", name: "Vĩnh Phúc" },
     { label: "Yên Bái", name: "Yên Bái" }
 ]
+
+export const stateEducation = [
+    {
+        label: "In progress",
+        name: "In progress",
+        id: 'In progress'
+    },
+
+    {
+        label: "Graduated",
+        name: "Graduated",
+        id: 'Graduated'
+    },
+]
+
+export const stateLevel = [
+    {
+        label: "Novice",
+        name: "Novice",
+        id: 'Novice'
+    },
+    {
+        label: "Beginners",
+        name: "Beginners",
+        id: 'Beginners'
+    },
+    {
+        label: "Intermediate",
+        name: "Intermediate",
+        id: 'Intermediate'
+    },
+    {
+        label: "Proficient",
+        name: "Proficient",
+        id: 'Proficient'
+    },
+    {
+        label: "Expert",
+        name: "Expert",
+        id: 'Expert'
+    },
+]
+
+export const experienceEnum = [
+    {
+        label: "All experience",
+        name: "All experience",
+        id: 'all'
+    },
+    {
+        label: "No experience",
+        name: "No experience",
+        id: '0'
+    },
+    {
+        label: "Less than 1 year ",
+        name: "Less than 1 year",
+        id: '1'
+    },
+    {
+        label: "1 – 3 years",
+        name: "1 – 3 years",
+        id: '2'
+    },
+    {
+        label: "3 – 5 years",
+        name: "3 – 5 years",
+        id: '3'
+    },
+    {
+        label: "More than 5 years",
+        name: "More than 5 years",
+        id: '4'
+    },
+]
+
 
 

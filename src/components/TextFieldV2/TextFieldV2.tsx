@@ -28,16 +28,16 @@ const CustomTextInput = ({
       )}
       <input
         disabled={disabled}
+        style={{ width: width ? width : 'auto' }}
         type="text"
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className={`${width ? `w-[${width}px]` : 'w-auto'}  ${
+        className={`${
           type === 'search' ? 'pr-3 pl-12' : 'px-3'
         }   py-2.5 bg-[#E6F0F6] rounded-md outline-none ${
           !!error && 'border border-red-600'
         } ${disabled && 'cursor-not-allowed text-gray-400'} 
-        focus:bg-[#cbe0ec]
 `}
       />
       {!!error && <span className="text-red-600 text-sm">{error?.message}</span>}

@@ -1,0 +1,9 @@
+.scrollable {
+  overflow: auto; /* Hiển thị thanh cuộn khi cần thiết */
+  scrollbar-width: none; /* Ẩn thanh cuộn ở Firefox */
+  -ms-overflow-style: none; /* Ẩn thanh cuộn ở Internet Explorer và Edge */
+}
+
+.scrollable::-webkit-scrollbar {
+  display: none; /* Ẩn thanh cuộn ở Chrome, Safari và Opera */
+}

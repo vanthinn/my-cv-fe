@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import { routerUser } from './routes/router'
+import Login from './pages/Auth/Login/Login'
+import Register from './pages/Auth/Register'
 
 function App() {
   return (
@@ -22,6 +24,15 @@ function App() {
               }></Route>
           )
         })}
+
+        <Route
+          path="/auth/login"
+          element={<Login />}
+        />
+        <Route
+          path="/auth/register"
+          element={<Register />}
+        />
       </Routes>
     </>
   )

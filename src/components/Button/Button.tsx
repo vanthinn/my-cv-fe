@@ -54,7 +54,7 @@ const Button = ({ typeButton = 'primary', loading, ...props }: IButton) =>
         }
         case TypesButton[6]: {
           result =
-            'transition-all duration-500 bg-[#A3DA8F] hover:bg-[#07ea48] text-black hover:text-white  border border-[#A3DA8F] rounded-2xl shadow'
+            'transition-all duration-500 hover:bg-[#07ea48] text-[#07ea48] hover:text-white py-2 px-4  border border-[#07ea48] rounded-md shadow'
           break
         }
         case TypesButton[7]: {
@@ -64,7 +64,7 @@ const Button = ({ typeButton = 'primary', loading, ...props }: IButton) =>
         }
         case TypesButton[8]: {
           result =
-            'transition-all duration-300 bg-[#efebeb] hover:bg-[#f4f4f4] text-black font-semibold py-1.5 px-4 border border-[#f4f4f4] rounded-2xl shadow focus:outline-none focus:ring-0'
+            'transition-all duration-300 bg-[#efebeb] hover:bg-[#f4f4f4] text-black font-semibold py-1.5 px-4 border border-[#f4f4f4] rounded-md shadow focus:outline-none focus:ring-0'
           break
         }
         case TypesButton[9]: {
