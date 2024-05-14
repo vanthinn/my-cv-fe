@@ -65,7 +65,7 @@ const Header: FC<Props> = (props): JSX.Element => {
             </ul>
           </div>
 
-          {/* <div className="flex gap-6">
+          <div className="flex gap-6">
             <Button
               typeButton="outline"
               className="hover:transform hover:translate-y-[-4px]">
@@ -81,9 +81,9 @@ const Header: FC<Props> = (props): JSX.Element => {
               className="hover:transform hover:translate-y-[-4px] ">
               For Employers <HiArrowSmRight className="ml-2 text-xl" />
             </Button>
-          </div> */}
+          </div>
 
-          <div className="flex gap-4 items-center">
+          {/* <div className="flex gap-4 items-center">
             <Tooltip title={<h1 className="text-sm">Message</h1>}>
               <SmsIcon
                 onClick={() => navigate('/message')}
@@ -92,7 +92,7 @@ const Header: FC<Props> = (props): JSX.Element => {
               />
             </Tooltip>
             <AvatarHeader />
-          </div>
+          </div> */}
         </div>
       </Container>
     </div>

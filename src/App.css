@@ -3,6 +3,9 @@ html,
 body {
   font-family: 'Poppins', sans-serif;
 }
+li {
+  /* list-style: none; */
+}
 
 *::-webkit-scrollbar {
   background-color: #fff;

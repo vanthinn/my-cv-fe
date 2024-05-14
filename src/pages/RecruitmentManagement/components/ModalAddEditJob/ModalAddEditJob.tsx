@@ -1,0 +1,371 @@
+import { FC, Fragment, useEffect, useState } from 'react'
+import { IOption } from '../../../../types/ICommon'
+import { Gender } from '../../../../common/enum'
+import { yupResolver } from '@hookform/resolvers/yup'
+import * as yup from 'yup'
+import { Controller, useForm } from 'react-hook-form'
+import { IRecruitmentRequest } from '../../../../types/IRecruitment'
+import { EditorState, convertToRaw } from 'draft-js'
+import draftToHtml from 'draftjs-to-html'
+import { Dialog, Transition } from '@headlessui/react'
+import TextFieldV2 from '../../../../components/TextFieldV2'
+import Selected from '../../../../components/Select'
+import DateTimePicker from '../../../../components/DateTimePicker'
+import RichTextEditTor from '../../../../components/RichTextEditor'
+import Button from '../../../../components/Button'
+import { HiOutlineTrash, HiPlus, HiX } from 'react-icons/hi'
+
+interface Props {
+  open: boolean
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const optionsGender: IOption[] = [
+  {
+    id: Gender.MALE,
+    name: Gender.MALE,
+  },
+  {
+    id: Gender.FEMALE,
+    name: Gender.FEMALE,
+  },
+  {
+    id: Gender.OTHER,
+    name: Gender.OTHER,
+  },
+]
+
+const schema = yup.object().shape({
+  title: yup.string().required('Email is required'),
+  salary: yup.string().required('AvatarUrl is required'),
+  deadline: yup.string().required('AvatarUrl is required'),
+  description: yup.string().required('AvatarUrl is required'),
+  jobType: yup.string().required('AvatarUrl is required'),
+  experience: yup.string().required('AvatarUrl is required'),
+})
+
+const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
+  const defaultValues: IRecruitmentRequest = {
+    id: '',
+    deadline: '',
+    description: '',
+    jobType: '',
+    experience: '',
+    title: '',
+    salary: '',
+    education: '',
+    skills: [],
+    workTime: '',
+  }
+
+  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [inputSkills, setInputSkills] = useState<string>('')
+  const [skillsArray, setSkillsArray] = useState<string[]>([])
+
+  const { handleSubmit, control, setValue, watch, clearErrors } =
+    useForm<IRecruitmentRequest>({
+      defaultValues: defaultValues,
+      resolver: yupResolver(schema),
+    })
+
+  const handleChangeInputSkill = (value: any): void => {
+    setInputSkills(value.target.value)
+  }
+
+  const handleDelete = (item: string) => {
+    const newData = skillsArray.filter((skill: any) => skill !== item)
+    setSkillsArray(newData)
+    setValue('skills', newData)
+  }
+
+  const onEditorStateChange = (editorState: EditorState) => {
+    setEditorState(editorState)
+    if (editorState.getCurrentContent().hasText()) {
+      clearErrors('description')
+      const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
+      setValue('description', dataHTML)
+    } else {
+      setValue('description', '')
+    }
+  }
+
+  const onSubmit = async (data: any) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
+    console.log(dataHTML)
+    console.log(data)
+  }
+
+  return (
+    <div>
+      <Transition
+        appear
+        show={open}
+        as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-[999]"
+          onClose={() => setOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0">
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95">
+                <Dialog.Panel className="relative w-full max-w-[700px] max-h-[600px]  overflow-y-auto overflow-hidden flex flex-col transform  rounded-xl bg-white p-4 text-left align-middle shadow-xl transition-all">
+                  <div className="flex flex-col gap-2 relative">
+                    <h2 className="m-auto text-xl font-semibold">Add new job</h2>
+                    <span
+                      className="absolute top-0 right-0 text-xl text-gray-500 cursor-pointer"
+                      onClick={() => setOpen(false)}>
+                      X
+                    </span>
+                  </div>
+                  <div className="mt-2.5">
+                    <form
+                      className="mt-4 flex-1"
+                      onSubmit={handleSubmit(onSubmit)}>
+                      <div className="grid grid-cols-1 gap-4 flex-1">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="col-span-1 flex flex-col">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Job title <span className="text-red-600">*</span>
+                            </label>
+                            <Controller
+                              name="title"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <TextFieldV2
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value}
+                                />
+                              )}
+                            />
+                          </div>
+
+                          <div className="col-span-1 flex flex-col ">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Experience <span className="text-red-600">*</span>
+                            </label>
+                            <Controller
+                              name="experience"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <Selected
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value}
+                                  options={optionsGender}
+                                  empty="Select experience"
+                                />
+                              )}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="col-span-1 flex flex-col ">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Salary <span className="text-red-600">*</span>
+                            </label>
+                            <Controller
+                              name="salary"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <TextFieldV2
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value}
+                                />
+                              )}
+                            />
+                          </div>
+                          <div className="col-span-1 flex flex-col">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Education
+                            </label>
+                            <Controller
+                              name="education"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <Selected
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value || ''}
+                                  options={optionsGender}
+                                  empty="Select education"
+                                />
+                              )}
+                            />
+                          </div>
+                          <div className="col-span-1 flex flex-col">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Job type <span className="text-red-600">*</span>
+                            </label>
+                            <Controller
+                              name="jobType"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <Selected
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value}
+                                  options={optionsGender}
+                                  empty="Select job type"
+                                />
+                              )}
+                            />
+                          </div>
+                          <div className="col-span-1 flex flex-col">
+                            <label
+                              htmlFor=""
+                              className="font-semibold text-gray-700">
+                              Deadline <span className="text-red-600">*</span>
+                            </label>
+                            <Controller
+                              name="deadline"
+                              control={control}
+                              render={({
+                                field: { onChange, value },
+                                fieldState: { error },
+                              }) => (
+                                <DateTimePicker
+                                  error={error}
+                                  onChange={onChange}
+                                  value={value}
+                                />
+                              )}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h6 className="text-base font-semibold mt-4 mb-2">SKills</h6>
+                        <div className="flex gap-4">
+                          <TextFieldV2
+                            onChange={handleChangeInputSkill}
+                            value={inputSkills}
+                            placeholder="eg. HTML/CSS"
+                            width="400px"
+                          />
+
+                          <Button
+                            disabled={inputSkills === ''}
+                            onClick={() => {
+                              setInputSkills('')
+                              const newData = [...skillsArray, inputSkills]
+                              setSkillsArray(newData)
+                              setValue('skills', newData)
+                            }}>
+                            <HiPlus className="text-xl mr-2" /> Add
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-4">
+                        {skillsArray.length > 0 &&
+                          skillsArray.map((item: any, index: number) => (
+                            <span
+                              className="px-3 py-1.5 text-sm text-white bg-blue-600 list-none rounded-full flex items-center "
+                              key={index}>
+                              {item}{' '}
+                              <HiX
+                                onClick={() => handleDelete(item)}
+                                className="text-lg ml-3 cursor-pointer"
+                              />
+                            </span>
+                          ))}
+                      </div>
+
+                      <div className="mt-4">
+                        <label
+                          htmlFor=""
+                          className="font-semibold text-gray-700">
+                          Description <span className="text-red-600">*</span>
+                        </label>
+
+                        <Controller
+                          name="description"
+                          control={control}
+                          render={({ field: {}, fieldState: { error } }) => (
+                            <RichTextEditTor
+                              editorState={editorState}
+                              onEditorStateChange={onEditorStateChange}
+                              error={error}
+                            />
+                          )}
+                        />
+                      </div>
+
+                      <div className="mt-6 flex justify-end">
+                        <div className="flex gap-4">
+                          <Button
+                            typeButton="cancel"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setOpen(false)
+                            }}
+                            className="px-2 py-1">
+                            Cancel
+                          </Button>
+                          <Button
+                            type="submit"
+                            className="px-2 py-1">
+                            Save
+                          </Button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </div>
+  )
+}
+
+export default ModalAddEditJob

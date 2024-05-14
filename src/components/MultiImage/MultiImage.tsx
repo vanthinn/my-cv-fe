@@ -9,6 +9,7 @@ interface IMultiImage {
   handleFileChange?: (e: any) => void
   single: boolean
   loading?: boolean
+  height?: string
 }
 
 const MultiImage = ({
@@ -18,6 +19,7 @@ const MultiImage = ({
   handleFileChange,
   InputRef,
   loading,
+  height,
 }: IMultiImage) => {
   const [maxItem] = useState(5)
   const [hiddenBtnAdd, setHiddenBtnAdd] = useState<any>('')
@@ -58,7 +60,7 @@ const MultiImage = ({
             <button
               className="bg-amber-400 text-white px-4 py-0.5 rounded-md"
               onClick={() => InputRef.current.click()}>
-              Thêm ảnh
+              Add image
             </button>
             <input
               type="file"
@@ -72,7 +74,8 @@ const MultiImage = ({
         {(listImage.length == 0 || loading) && (
           <div className="rounded border-gray-300  gap-4">
             <div
-              className={`${hiddenBtnAdd} relative w-full h-auto object-cover aspect-[3/2] rounded-md border-2 border-dashed border-amber-400 bg-[#fef9ee] flex justify-center items-center select-none`}>
+              style={{ height: height ? height : 'auto' }}
+              className={`${hiddenBtnAdd} relative w-full object-cover aspect-[3/2] rounded-md border-2 border-dashed border-amber-400 bg-[#fef9ee] flex justify-center items-center select-none`}>
               <button
                 style={{ opacity: 0.8 }}
                 className={`bg-amber-400 rounded group-hover:block hover:bg-primary-500 border-primary-400 px-1 py-1 bg-primary-400 cursor-pointer text-white font-bold`}
@@ -112,7 +115,7 @@ const MultiImage = ({
               />
               <label
                 className={`absolute bottom-2 text-blueGray-600 text-[1rem] md:text-sm text-start`}>
-                Thêm ảnh
+                Add image
               </label>
             </div>
           </div>

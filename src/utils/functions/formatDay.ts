@@ -31,24 +31,24 @@ export const formatDateTimeLocal = (dateTime: string): string => {
     return formattedTime;
 }
 
+
 export const dayComparedToThePast = (dateTime: string): string => {
     const now = dayjs();
     const inputDate = dayjs(dateTime);
     const diff = now.diff(inputDate, 'minute');
     let output: string;
-    if (diff > 3 * 24 * 60) {
-        output = inputDate.format('DD/MM/YYYY HH:mm');
-    } else if (diff > 24 * 60) {
+    if (diff > 24 * 60) {
         const diffInDays = Math.floor(diff / (24 * 60));
-        output = `${diffInDays} ngày trước`;
+        output = `${diffInDays} day ago`;
     } else if (diff > 60) {
         const diffInHours = Math.floor(diff / 60);
-        output = `${diffInHours} giờ trước`;
+        output = `${diffInHours} hours ago`;
     } else if (diff < 2) {
-        output = `vừa xong`
+        output = `just finished`
     } else {
-        output = `${diff} phút trước`;
+        output = `${diff} hours ago`;
     }
     return output;
 }
+
 

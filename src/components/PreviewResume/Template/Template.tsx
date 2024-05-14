@@ -10,6 +10,8 @@ const Template: FC<Props> = (): JSX.Element => {
   const { resumeData } = useStoreState(resumeStateSelector)
   const template = resumeData.template
 
+  console.log(resumeData)
+
   let templateUI: JSX.Element
   switch (template) {
     case 'economic':

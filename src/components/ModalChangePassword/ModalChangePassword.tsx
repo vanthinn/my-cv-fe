@@ -12,7 +12,7 @@ interface Props {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface IDataChangePassword {
+export interface IDataChangePassword {
   password: string
   newPassword: string
   confirmPassword: string

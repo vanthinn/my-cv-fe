@@ -8,6 +8,8 @@ interface IProps {
   value?: string
   type?: string
   width?: string
+  password?: boolean
+  className?: string
 }
 
 const CustomTextInput = ({
@@ -18,6 +20,8 @@ const CustomTextInput = ({
   disabled,
   type,
   width,
+  className,
+  password = false,
 }: any): JSX.Element => {
   return (
     <div className={`flex flex-col gap-1 relative `}>
@@ -29,7 +33,7 @@ const CustomTextInput = ({
       <input
         disabled={disabled}
         style={{ width: width ? width : 'auto' }}
-        type="text"
+        type={password ? 'password' : 'text'}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
@@ -37,7 +41,7 @@ const CustomTextInput = ({
           type === 'search' ? 'pr-3 pl-12' : 'px-3'
         }   py-2.5 bg-[#E6F0F6] rounded-md outline-none ${
           !!error && 'border border-red-600'
-        } ${disabled && 'cursor-not-allowed text-gray-400'} 
+        } ${className} ${disabled && 'cursor-not-allowed text-gray-400'} 
 `}
       />
       {!!error && <span className="text-red-600 text-sm">{error?.message}</span>}
@@ -53,6 +57,8 @@ const TextFieldV2: FC<IProps> = ({
   value,
   type,
   width,
+  password,
+  className,
 }: IProps): JSX.Element => {
   return (
     <CustomTextInput
@@ -63,6 +69,8 @@ const TextFieldV2: FC<IProps> = ({
       placeholder={placeholder}
       type={type}
       width={width}
+      password={password}
+      className={className}
     />
   )
 }

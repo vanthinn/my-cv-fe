@@ -1,3 +1,5 @@
+import { IRecruitmentResponse } from "./IRecruitment";
+
 export interface IResume {
     id?: string;
     template?: string;
@@ -61,4 +63,15 @@ export interface ICertification {
     id?: string
     displayName: string
     dateTime: string
+}
+
+export interface IResumeApply {
+    id?: string,
+    fullName?: string
+    job: IRecruitmentResponse
+    cv: IResume
+    createdAt?: string
+    updatedAt?: string
+    status?: string
+
 }

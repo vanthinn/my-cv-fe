@@ -15,6 +15,52 @@ export const ROUTER_USER = Object.freeze({
     PROFILE: '/profile/:id',
 });
 
+export const ROUTER_EMPLOYER = Object.freeze({
+    LOGIN: 'auth/login',
+    SIGNUP: 'auth/sign-up',
+    FORGOT_PASSWORD: 'auth/forgot-password',
+    HOME: '/employer',
+    SETTING: '/employer/account-setting',
+    CHANGE_PASSWORD: 'change-password',
+    PROFILE: 'profile',
+    INFO_COMPANY: 'info-company',
+    BUSINESS_LICENSE: 'business-license',
+    RECRUITMENT_MANAGER: '/employer/recruitment-management',
+    DETAIL_JOB: '/employer/recruitment-management/:id',
+    CV_MANAGER: '/employer/cv-management'
+});
+
+export const DATA_SIDEBAR = [
+    {
+        id: 0,
+        name: 'Dashboard',
+        pathName: "/employer",
+        icon: "dashboard",
+        children: [],
+    },
+    {
+        id: 1,
+        name: 'Account settings',
+        pathName: "/employer/account-setting/profile",
+        icon: "setting",
+        children: [],
+    },
+    {
+        id: 2,
+        name: 'Recruitment',
+        pathName: "/employer/recruitment-management",
+        icon: "recruitment",
+        children: [],
+    },
+    {
+        id: 3,
+        name: 'CV management',
+        pathName: "/employer/cv-management",
+        icon: "cv",
+        children: [],
+    },
+];
+
 export const LIST_COUNTRY = [
     { label: "All Cities", name: "All Cities" },
     { label: "Hà Nội", name: "Hà Nội" },
