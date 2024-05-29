@@ -3,11 +3,13 @@ export const ROUTER_USER = Object.freeze({
     SIGNUP: 'auth/sign-up',
     FORGOT_PASSWORD: 'auth/forgot-password',
     HOME: '/',
-    JOB_DETAIL: 'jobs/"id',
+    BOOKMARK: '/list-bookmark',
+    HISTORY: '/history',
+    JOB_DETAIL: 'jobs/:id',
     MANAGEMENT_CV: '/manager-cv',
     NEW_RESUME: '/new-cv',
     CV_DETAIL: '/cv/:id',
-    PREVIEW_RESUME: '/preview-cv',
+    PREVIEW_RESUME: '/preview-cv/:id',
     COMPANY: '/company',
     COMPANY_DETAIL: '/company/:id',
     BLOG: '/blog',
@@ -16,9 +18,9 @@ export const ROUTER_USER = Object.freeze({
 });
 
 export const ROUTER_EMPLOYER = Object.freeze({
-    LOGIN: 'auth/login',
-    SIGNUP: 'auth/sign-up',
-    FORGOT_PASSWORD: 'auth/forgot-password',
+    LOGIN: '/employer/auth/login',
+    SIGNUP: '/employer/auth/sign-up',
+    FORGOT_PASSWORD: '/employer/auth/forgot-password',
     HOME: '/employer',
     SETTING: '/employer/account-setting',
     CHANGE_PASSWORD: 'change-password',
@@ -29,6 +31,31 @@ export const ROUTER_EMPLOYER = Object.freeze({
     DETAIL_JOB: '/employer/recruitment-management/:id',
     CV_MANAGER: '/employer/cv-management'
 });
+
+export const urlsNoTokenRequired = ["/", "/company"]
+
+export const TENANT = Object.freeze({
+    EMPLOYER: 'ad87d793-7579-40fa-88c0-79b99551cb9e',
+    USER: '32788ede-ae28-4600-8903-22be70ba47d2',
+});
+
+
+
+
+export const ROLE_ID = Object.freeze({
+    EMPLOYER: '70f000b0-1a42-4102-99df-78314c44bce0',
+    USER: '6d091d62-158f-4037-b8b1-ac3a3ba26511',
+});
+
+export const fonts = [
+    { name: 'Poppins', value: 'Poppins, sans-serif' },
+    { name: 'Roboto', value: 'Roboto, sans-serif' },
+    { name: 'Open Sans', value: 'Open Sans, sans-serif' },
+    { name: 'Lobster', value: 'Lobster, cursive' },
+    { name: 'Montserrat', value: 'Montserrat, sans-serif' },
+    { name: 'Lora', value: 'Lora, serif' },
+    { name: 'Pacifico', value: 'Pacifico, cursive' }
+];
 
 export const DATA_SIDEBAR = [
     {
@@ -173,32 +200,196 @@ export const experienceEnum = [
     {
         label: "All experience",
         name: "All experience",
-        id: 'all'
+        id: 'All experience'
     },
     {
         label: "No experience",
         name: "No experience",
-        id: '0'
+        id: 'No experience'
     },
     {
-        label: "Less than 1 year ",
+        label: "Less than 1 year",
         name: "Less than 1 year",
-        id: '1'
+        id: 'Less than 1 year'
     },
     {
-        label: "1 – 3 years",
-        name: "1 – 3 years",
-        id: '2'
+        label: "1 – 3 of years",
+        name: "1 – 3 of years",
+        id: '1 – 3 of years'
     },
     {
-        label: "3 – 5 years",
-        name: "3 – 5 years",
-        id: '3'
+        label: "3 – 5 of years",
+        name: "3 – 5 of years",
+        id: '3 – 5 of years'
     },
     {
         label: "More than 5 years",
         name: "More than 5 years",
-        id: '4'
+        id: 'More than 5 years'
+    },
+]
+
+export const experienceAdd = [{
+    label: "No experience",
+    name: "No experience",
+    id: 'No experience'
+},
+{
+    label: "Less than 1 year",
+    name: "Less than 1 year",
+    id: 'Less than 1 year'
+},
+{
+    label: "1 – 3 of years",
+    name: "1 – 3 of years",
+    id: '1 – 3 of years'
+},
+{
+    label: "3 – 5 of years",
+    name: "3 – 5 of years",
+    id: '3 – 5 of years'
+},
+{
+    label: "More than 5 years",
+    name: "More than 5 years",
+    id: 'More than 5 years'
+},]
+
+export const educationData = [
+    {
+        label: "Minimum Associate Degree",
+        name: "Minimum Associate Degree",
+        id: 'Minimum Associate Degree'
+    },
+    {
+        label: "Minimum College Degree",
+        name: "Minimum College Degree",
+        id: 'Minimum College Degree'
+    },
+    {
+        label: "Minimum Bachelor’s Degree",
+        name: "Minimum Bachelor’s Degree",
+        id: 'Minimum Bachelor’s Degree'
+    },
+    {
+        label: "Minimum High School",
+        name: "Minimum High School",
+        id: 'Minimum High School'
+    },
+]
+
+export const jobTypeData = [
+    {
+        label: "Full-Time",
+        name: "Full-Time",
+        id: 'Full-Time'
+    },
+    {
+        label: "Part-Time",
+        name: "Part-Time",
+        id: 'Part-Time'
+    },
+    {
+        label: "Full-Time - Remote",
+        name: "Full-Time - Remote",
+        id: 'Full-Time - Remote'
+    },
+    {
+        label: "Part-Time - Remote",
+        name: "Part-Time - Remote",
+        id: 'Part-Time - Remote'
+    },
+
+]
+
+export const scaleData = [
+    {
+        label: "11 - 50 employees",
+        name: "11 - 50 employees",
+        id: '11 - 50 employees'
+    },
+    {
+        label: "100 - 200 employees",
+        name: "100 - 200 employees",
+        id: '100 - 200 employees'
+    },
+    {
+        label: "201 - 500 employees",
+        name: "201 - 500 employees",
+        id: '201 - 500 employees'
+    },
+    {
+        label: "501 - 1000 employees",
+        name: "501 - 1000 employees",
+        id: '501 - 1000 employees'
+    },
+    {
+        label: "1000 - 2000 employees",
+        name: "1000 - 2000 employees",
+        id: '1000 - 2000 employees'
+    },
+    {
+        label: "More than 2000 employees",
+        name: "More than 2000 employees",
+        id: 'More than 2000 employees'
+    },
+]
+
+export const fieldOfActivityData = [
+    {
+        label: "Marketing and Logistics",
+        name: "Marketing and Logistics",
+        id: 'Marketing and Logistics'
+    },
+    {
+        label: "Consumer Services",
+        name: "Consumer Services",
+        id: 'Consumer Services'
+    },
+    {
+        label: "Information Technology and Services",
+        name: "Information Technology and Services",
+        id: 'Information Technology and Services'
+    },
+    {
+        label: "Automotive",
+        name: "Automotive",
+        id: 'Automotive'
+    },
+    {
+        label: "Hospital & Health Care",
+        name: "Hospital & Health Care",
+        id: 'Hospital & Health Care'
+    },
+    {
+        label: "Architecture & Planning",
+        name: "Architecture & Planning",
+        id: 'Architecture & Planning'
+    },
+    {
+        label: "Accounting",
+        name: "Accounting",
+        id: 'Accounting'
+    },
+    {
+        label: "Cosmetics",
+        name: "Cosmetics",
+        id: 'Cosmetics'
+    },
+    {
+        label: "Construction",
+        name: "Construction",
+        id: 'Construction'
+    },
+    {
+        label: "Real Estate",
+        name: "Real Estate",
+        id: 'Real Estate'
+    },
+    {
+        label: "Financial Services",
+        name: "Financial Services",
+        id: 'Financial Services'
     },
 ]
 

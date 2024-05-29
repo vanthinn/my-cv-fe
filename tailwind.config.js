@@ -5,14 +5,11 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      colors: {
-        blackCustom: '#000',
-        whiteCustom: '#fff',
-        grayCustom: '#373D48',
-        skyCustom: '#409BF9',
-        orangeCustom: '#FF851B',
-        greenCustom: '#3AC587',
-        brownCustom: '#703838',
+      scale: {
+        '150': '1.5',
+        '200': '2',
+        '250': '2.5',
+        '300': '3',
       },
     },
   },

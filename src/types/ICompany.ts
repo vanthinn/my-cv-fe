@@ -1,7 +1,7 @@
 export interface ICompany {
     id?: string;
     displayName: string;
-    logo: string,
+    logoUrl: string,
     address: string
     images?: string
     email: string
@@ -9,6 +9,24 @@ export interface ICompany {
     fieldOfActivity: string
     scale: string
     description?: string
+    intro?: string
     website?: string
-    count_jobs?: number
+    _count?: {
+        jobs: number
+    }
 }
+
+// export interface ICompanyRequest {
+//     id?: string;
+//     displayName: string;
+//     logoUrl: string,
+//     address: string
+//     images?: string
+//     email: string
+//     phoneNumber: string
+//     fieldOfActivity: string
+//     scale: string
+//     description?: string
+//     intro?: string
+//     website?: string
+// }   

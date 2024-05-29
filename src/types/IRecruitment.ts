@@ -3,7 +3,7 @@ import { IUser } from "./IUser";
 
 export interface IRecruitmentRequest {
     id?: string;
-    title: string;
+    jobTitle: string;
     salary: string,
     jobType: string
     experience: string
@@ -17,6 +17,8 @@ export interface IRecruitmentRequest {
 export interface IRecruitmentResponse extends IRecruitmentRequest {
     createdAt?: string
     updatedAt?: string
-    createdBy: IUser
+    user: IUser
     company: ICompany
+    jobsCompany: IRecruitmentResponse[]
+    statusBookmark?: string
 }

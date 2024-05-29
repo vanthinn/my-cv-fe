@@ -21,7 +21,7 @@ const schema = yup.object().shape({
   languages: yup.array().of(
     yup.object().shape({
       id: yup.string(),
-      language: yup.string().required('Language is required'),
+      displayName: yup.string().required('Language is required'),
       level: yup.string().required('Level is required'),
     }),
   ),
@@ -35,7 +35,9 @@ const SkillAndLanguage: FC<Props> = ({
   const { resumeData } = useStoreState(resumeStateSelector)
   const { setResumeData } = useStoreActions(resumeActionSelector)
   const skills = resumeData?.skills || []
-  const languagesDefault = resumeData?.languages || [{ id: '', language: '', level: '' }]
+  const languagesDefault = resumeData?.languages || [
+    { id: '', displayName: '', level: '' },
+  ]
   const formRef = useRef<HTMLFormElement>(null)
   const [inputSkills, setInputSkills] = useState<string>('')
 
@@ -136,13 +138,13 @@ const SkillAndLanguage: FC<Props> = ({
               <React.Fragment key={field.id}>
                 <div className="flex flex-col ">
                   <label
-                    htmlFor={`languages[${index}].language`}
+                    htmlFor={`languages[${index}].displayName`}
                     className="font-semibold text-gray-700 mb-1">
                     Language
                   </label>
                   <Controller
                     name={
-                      `languages[${index}].language` as `languages.${number}.language`
+                      `languages[${index}].displayName` as `languages.${number}.displayName`
                     }
                     control={control}
                     defaultValue=""
@@ -187,7 +189,7 @@ const SkillAndLanguage: FC<Props> = ({
           <Button
             type="button"
             className="mt-6"
-            onClick={() => append({ language: '', level: '' })}>
+            onClick={() => append({ displayName: '', level: '' })}>
             <HiPlus className="text-xl mr-2" /> Add another
           </Button>
         </form>

@@ -10,6 +10,12 @@ import Selected from '../../../../components/Select'
 import DateTimePicker from '../../../../components/DateTimePicker'
 import { Gender } from '../../../../common/enum'
 import Button from '../../../../components/Button'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import {
+  notifyActionSelector,
+  userActionSelector,
+  userStateSelector,
+} from '../../../../store'
 
 interface Props {}
 
@@ -29,36 +35,71 @@ const optionsGender: IOption[] = [
 ]
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('Email is required'),
-  lastName: yup.string().required('AvatarUrl is required'),
+  firstName: yup.string().required('FirstName is required'),
+  lastName: yup.string().required('LastName is required'),
   avatarUrl: yup.string().required('AvatarUrl is required'),
-  dateOfBirth: yup.string().required('AvatarUrl is required'),
-  phoneNumber: yup.string().required('AvatarUrl is required'),
-  email: yup.string().required('AvatarUrl is required'),
-  gender: yup.string().required('AvatarUrl is required'),
+  dateOfBirth: yup
+    .string()
+    .required('Date of birth is required')
+    .test('is-18', 'You must be at least 18 years old', function (value) {
+      const today = new Date()
+      const birthDate = new Date(value)
+      const age = today.getFullYear() - birthDate.getFullYear()
+      const monthDifference = today.getMonth() - birthDate.getMonth()
+
+      // Adjust age if the birth date has not occurred yet this year
+      if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+      ) {
+        return age > 18
+      }
+
+      return age >= 18
+    }),
+  phoneNumber: yup.string().required('Phone number is required'),
+  email: yup.string().required('Email is required'),
+  gender: yup.string().required('Gender is required'),
 })
 
 const Profile: FC<Props> = (props): JSX.Element => {
+  const { currentUserSuccess, isEditUserSuccess, messageErrorUser } =
+    useStoreState(userStateSelector)
+  const { postImage, editEdit, setIsEditUserSuccess, setCurrentUserSuccess } =
+    useStoreActions(userActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const ImageRef: any = useRef()
   const [Images, setImages] = useState<Image[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const defaultValues: IProfileCV = {
-    id: '',
-    firstName: '',
-    lastName: '',
-    avatarUrl: '',
-    dateOfBirth: '',
-    phoneNumber: '',
-    email: 'thinh209202@gmail.com',
-    gender: '',
-    address: '',
+    id: currentUserSuccess?.id || '',
+    firstName: currentUserSuccess?.firstName || '',
+    lastName: currentUserSuccess?.lastName || '',
+    avatarUrl: currentUserSuccess?.avatarUrl || '',
+    dateOfBirth: currentUserSuccess?.dateOfBirth || '',
+    phoneNumber: currentUserSuccess?.phoneNumber || '',
+    email: currentUserSuccess?.email || '',
+    gender: currentUserSuccess?.gender || '',
+    address: currentUserSuccess?.address || '',
   }
 
-  const { handleSubmit, control, setValue, watch, clearErrors } = useForm<IProfileCV>({
+  const { handleSubmit, control, setValue } = useForm<IProfileCV>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
   })
+
+  useEffect(() => {
+    if (currentUserSuccess?.avatarUrl) {
+      const imagePreview: Image[] = [
+        {
+          name: currentUserSuccess?.lastName || '',
+          fileUrl: currentUserSuccess?.avatarUrl || '',
+        },
+      ]
+      setImages(imagePreview)
+    }
+  }, [])
 
   const _deleteImage = () => {
     setImages([])
@@ -67,13 +108,12 @@ const Profile: FC<Props> = (props): JSX.Element => {
 
   const getUrlImage = async (file: any): Promise<void> => {
     setIsLoading(true)
-    setValue('avatarUrl', 'avatar')
     const formData = new FormData()
     formData.append(`documents`, file[0])
-    // const resImage = await postImage(formData)
-    // if (resImage) {
-    //   setValue('avatarUrl', resImage[0].fileUrl)
-    // }
+    const resImage = await postImage(formData)
+    if (resImage) {
+      setValue('avatarUrl', resImage[0].fileUrl)
+    }
     setIsLoading(false)
   }
 
@@ -95,15 +135,29 @@ const Profile: FC<Props> = (props): JSX.Element => {
 
   const onSubmit = async (data: any) => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    setIsLoading(true)
+    const res = await editEdit(data)
+    if (res.status === 200) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Edit user successfully',
+      })
+      setCurrentUserSuccess(res.data)
+    }
+    setIsLoading(false)
   }
 
-  const valueAvatarUrl = watch('avatarUrl')
-
   useEffect(() => {
-    if (valueAvatarUrl !== '') {
-      clearErrors('avatarUrl')
+    if (!isEditUserSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorUser,
+      })
+      setIsEditUserSuccess(true)
     }
-  }, [valueAvatarUrl])
+  }, [isEditUserSuccess])
   return (
     <div className="flex flex-col border border-slate-200 flex-1 h-full px-4 py-4 rounded-md">
       <h4 className="font-semibold text-xl">Profile</h4>

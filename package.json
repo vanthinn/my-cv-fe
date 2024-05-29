@@ -25,7 +25,9 @@
     "draftjs-to-html": "^0.9.1",
     "easy-peasy": "^6.0.4",
     "html-to-draftjs": "^1.5.0",
+    "html2canvas": "^1.4.1",
     "i": "^0.3.7",
+    "jspdf": "^2.5.1",
     "npm": "^10.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -35,6 +37,7 @@
     "react-icons": "^5.0.1",
     "react-router-dom": "^6.22.3",
     "swiper": "^11.1.1",
+    "uuid": "^9.0.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {
@@ -44,6 +47,7 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-draft-wysiwyg": "^1.13.8",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",

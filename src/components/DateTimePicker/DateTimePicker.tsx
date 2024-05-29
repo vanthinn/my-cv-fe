@@ -6,9 +6,15 @@ interface Props {
   error?: any
   onChange: any
   value: any
+  disabled?: boolean
 }
 
-const DateTimePicker: FC<Props> = ({ error, onChange, value }: Props): JSX.Element => {
+const DateTimePicker: FC<Props> = ({
+  error,
+  onChange,
+  value,
+  disabled,
+}: Props): JSX.Element => {
   return (
     <div>
       <DatePicker
@@ -24,6 +30,7 @@ const DateTimePicker: FC<Props> = ({ error, onChange, value }: Props): JSX.Eleme
           backgroundColor: '#E6F0F6',
           borderRadius: '8px',
         }}
+        disabled={disabled}
         format="DD-MM-YYYY"
         value={value === '' ? dayjs() : dayjs(value)}
         onChange={onChange}

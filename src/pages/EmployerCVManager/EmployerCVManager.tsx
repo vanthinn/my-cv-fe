@@ -3,6 +3,7 @@ import { FC, useState } from 'react'
 import TabPanel from '../../components/TabPanel'
 import TabAllCV from './components/TabAllCV'
 import TabCVapprove from './components/TabCVApprove'
+import TabCVReject from './components/TabCVReject'
 
 interface Props {}
 
@@ -37,6 +38,11 @@ const EmployerCVManager: FC<Props> = (props): JSX.Element => {
               label="CV APPROVED"
               {...a11yProps(1)}
             />
+
+            <Tab
+              label="CV REJECT"
+              {...a11yProps(1)}
+            />
           </Tabs>
         </Box>
 
@@ -50,6 +56,12 @@ const EmployerCVManager: FC<Props> = (props): JSX.Element => {
           value={value}
           index={1}>
           <TabCVapprove />
+        </TabPanel>
+
+        <TabPanel
+          value={value}
+          index={2}>
+          <TabCVReject />
         </TabPanel>
       </div>
     </div>

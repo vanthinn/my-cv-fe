@@ -1,6 +1,5 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { ICompany } from '../../../../types/ICompany'
-import logo from '../../../../assets/images/logo.png'
 import TextFieldV2 from '../../../../components/TextFieldV2'
 import Button from '../../../../components/Button'
 import {
@@ -12,54 +11,23 @@ import {
 import ModalAddEditCompany from '../../../../components/ModalAddEditCompany/ModalAddEditCompany'
 import { useStoreActions, useStoreState } from 'easy-peasy'
 import { companyActionSelector, companyStateSelector } from '../../../../store'
+import { pageMode } from '../../../../types/ICommon'
+import { useDebounce } from '../../../../hooks/useDebounce'
+import { Pagination } from '@mui/material'
 
 interface Props {}
 
-const fakeData = [
-  {
-    id: '1',
-    displayName: 'CÔNG TY TNHH MEDIASTEP SOFTWARE VIỆT NAM',
-    logo: logo,
-    description:
-      '<p>Chúng tôi là Mediastep Software Việt Nam, một công ty phần mềm cung cấp cho bạn giải pháp thương mại điện tử mà bạn cần để bán nhiều hơn, có nhiều khách hàng hơn và xuất khẩu nhiều hơn. </p>',
-    address: 'Thành phố Hồ Chí Minh, Vietnam',
-    scale: '201-500 nhân viên',
-    fieldOfActivity: 'Marketing and Advertising',
-    count_jobs: 1,
-    email: 'company@gmail.com',
-    phoneNumber: '0923568587',
-  },
-  {
-    id: '1',
-    displayName: 'CÔNG TY TNHH MEDIASTEP SOFTWARE VIỆT NAM',
-    logo: logo,
-    description:
-      '<p>Chúng tôi là Mediastep Software Việt Nam, một công ty phần mềm cung cấp cho bạn giải pháp thương mại điện tử mà bạn cần để bán nhiều hơn, có nhiều khách hàng hơn và xuất khẩu nhiều hơn. </p>',
-    address: 'Thành phố Hồ Chí Minh, Vietnam',
-    scale: '201-500 nhân viên',
-    fieldOfActivity: 'Marketing and Advertising',
-    count_jobs: 1,
-    email: 'company@gmail.com',
-    phoneNumber: '0923568587',
-  },
-  {
-    id: '1',
-    displayName: 'CÔNG TY TNHH MEDIASTEP',
-    logo: logo,
-    description:
-      '<p>Chúng tôi là Mediastep Software Việt Nam, một công ty phần mềm cung cấp cho bạn giải pháp thương mại điện tử mà bạn cần để bán nhiều hơn, có nhiều khách hàng hơn và xuất khẩu nhiều hơn. </p>',
-    address: 'Thành phố Hồ Chí Minh, Vietnam',
-    scale: '201-500 nhân viên',
-    fieldOfActivity: 'Marketing and Advertising',
-    count_jobs: 1,
-    email: 'company@gmail.com',
-    phoneNumber: '0923568587',
-  },
-]
-
 const InfoCompany: FC<Props> = (props): JSX.Element => {
-  const { setCompany } = useStoreActions(companyActionSelector)
   const { company } = useStoreState(companyStateSelector)
+  const { getAllCompany, setCompany, chooseCompany } =
+    useStoreActions(companyActionSelector)
+  const [companies, setCompanies] = useState<ICompany[]>([])
+  const [totalRowCount, setTotalRowCount] = useState<number>(0)
+  const [paginationModel, setPaginationModel] = useState<pageMode>({
+    page: 1,
+    pageSize: 10,
+  })
+  const [isLoading, setIsLoading] = useState(false)
 
   const [inputSearch, setInputSearch] = useState<string>('')
   const [isOpenModalAddEditCompany, setIsOpenModalAddEditCompany] = useState(false)
@@ -67,6 +35,42 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
   const handleChangeSearch = (value: any): void => {
     setInputSearch(value.target.value)
   }
+
+  const getAllCompanyHome = async () => {
+    setIsLoading(true)
+    const res = await getAllCompany({
+      skip: (paginationModel.page - 1) * paginationModel.pageSize,
+      take: paginationModel.pageSize,
+      search: inputSearch,
+    })
+    if (res) {
+      setTotalRowCount(res?.totalRecords)
+      setCompanies(res.data)
+    }
+    setIsLoading(false)
+  }
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    if (value !== paginationModel.page) {
+      setPaginationModel((prev) => ({
+        ...prev,
+        page: value,
+      }))
+    }
+  }
+
+  const handleChooseCompany = async (id: string) => {
+    await chooseCompany({ id: id })
+  }
+
+  const debounceInputSearch = useDebounce(inputSearch, 500)
+
+  useEffect(() => {
+    if (!company) {
+      getAllCompanyHome()
+    }
+  }, [paginationModel, debounceInputSearch])
+
   return (
     <>
       <div className="flex flex-col border border-slate-200 flex-1 h-full px-4 py-4 rounded-md">
@@ -93,7 +97,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
               Search for companies that already exist in the system
             </p>
             <div className="mt-4 grid grid-cols-2 gap-4">
-              {fakeData.map((item, index) => (
+              {companies.map((item, index) => (
                 <div
                   key={index}
                   className="relative col-span-1 px-5 py-3.5 border border-gray-300 rounded-md hover:shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,_rgba(0,0,0,0.3)_0px_3px_7px_-3px] transition-all duration-200 cursor-pointer
@@ -102,7 +106,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                     <div className="flex-shrink-0 h-12 w-12 border border-gray-200 rounded-lg">
                       <img
                         className="h-full w-full object-cover"
-                        src={item.logo}
+                        src={item.logoUrl}
                         alt=""
                       />
                     </div>
@@ -120,12 +124,23 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                   </div>
 
                   <div
-                    onClick={() => setCompany(item)}
+                    onClick={() => {
+                      handleChooseCompany(item.id || '')
+                      setCompany(item)
+                    }}
                     className="absolute right-4 text-sm top-1/2 -translate-y-1/2 bg-green-500 text-white px-3 py-1 rounded-3xl hover:bg-green-700 transition-all duration-200">
                     <span>Select</span>
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="flex justify-center mt-8">
+              <Pagination
+                count={Math.ceil(totalRowCount / paginationModel.pageSize)}
+                page={paginationModel.page}
+                onChange={handleChange}
+              />
             </div>
           </div>
         )}
@@ -135,7 +150,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
             <div className="flex items-center space-x-4 mb-4">
               <div className="rounded-full border border-slate-200 h-12 w-12 flex items-center justify-center">
                 <img
-                  src={company.logo}
+                  src={company.logoUrl}
                   alt=""
                 />
               </div>
@@ -203,7 +218,12 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                   htmlFor="">
                   Description:
                 </label>
-                <span className="col-span-3">{company.description}</span>
+                <div
+                  className=" "
+                  dangerouslySetInnerHTML={{
+                    __html: company?.description || '',
+                  }}
+                />
               </div>
             </div>
 

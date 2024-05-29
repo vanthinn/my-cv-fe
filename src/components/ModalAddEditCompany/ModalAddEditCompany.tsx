@@ -9,11 +9,18 @@ import Button from '../Button'
 import TextFieldV2 from '../TextFieldV2'
 import MultiImage from '../MultiImage'
 import Selected from '../Select'
-import { Gender } from '../../common/enum'
 import RichTextEditTor from '../RichTextEditor'
 import { ContentState, EditorState, convertToRaw } from 'draft-js'
 import draftToHtml from 'draftjs-to-html'
 import htmlToDraft from 'html-to-draftjs'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import {
+  companyActionSelector,
+  companyStateSelector,
+  notifyActionSelector,
+  userActionSelector,
+} from '../../store'
+import { fieldOfActivityData, scaleData } from '../../common/constants'
 
 interface Props {
   open: boolean
@@ -21,29 +28,14 @@ interface Props {
   company: ICompany | null
 }
 
-const optionsGender: IOption[] = [
-  {
-    id: Gender.MALE,
-    name: Gender.MALE,
-  },
-  {
-    id: Gender.FEMALE,
-    name: Gender.FEMALE,
-  },
-  {
-    id: Gender.OTHER,
-    name: Gender.OTHER,
-  },
-]
-
 const schema = yup.object().shape({
-  displayName: yup.string().required('Email is required'),
-  logo: yup.string().required('AvatarUrl is required'),
-  phoneNumber: yup.string().required('AvatarUrl is required'),
-  fieldOfActivity: yup.string().required('AvatarUrl is required'),
-  scale: yup.string().required('AvatarUrl is required'),
-  email: yup.string().required('AvatarUrl is required'),
-  address: yup.string().required('AvatarUrl is required'),
+  displayName: yup.string().required('DisplayName is required'),
+  logoUrl: yup.string().required('Logo is required'),
+  phoneNumber: yup.string().required('Phone number is required'),
+  fieldOfActivity: yup.string().required('Field of activity is required'),
+  scale: yup.string().required('Scale is required'),
+  email: yup.string().required('Email is required'),
+  address: yup.string().required('Address is required'),
 })
 
 const ModalAddEditCompany: FC<Props> = ({
@@ -51,6 +43,12 @@ const ModalAddEditCompany: FC<Props> = ({
   setOpen,
   company,
 }: Props): JSX.Element => {
+  const { postImage } = useStoreActions(userActionSelector)
+  const { messageErrorCompany, isUpdateCompanySuccess } =
+    useStoreState(companyStateSelector)
+  const { updateCompany, setIsUpdateCompanySuccess, setCompany } =
+    useStoreActions(companyActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const ImageRef: any = useRef()
   const [Images, setImages] = useState<Image[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -59,11 +57,11 @@ const ModalAddEditCompany: FC<Props> = ({
   const defaultValues: ICompany = {
     id: company?.id || '',
     displayName: company?.displayName || '',
-    logo: company?.logo || '',
+    logoUrl: company?.logoUrl || '',
     phoneNumber: company?.phoneNumber || '',
     fieldOfActivity: company?.fieldOfActivity || '',
     scale: company?.scale || '',
-    description: '',
+    description: company?.description || '',
     images: '',
     email: company?.email || '',
     address: company?.address || '',
@@ -77,18 +75,17 @@ const ModalAddEditCompany: FC<Props> = ({
 
   const _deleteImage = () => {
     setImages([])
-    setValue('logo', '')
+    setValue('logoUrl', '')
   }
 
   const getUrlImage = async (file: any): Promise<void> => {
     setIsLoading(true)
-    setValue('logo', 'logo')
     const formData = new FormData()
     formData.append(`documents`, file[0])
-    // const resImage = await postImage(formData)
-    // if (resImage) {
-    //   setValue('avatarUrl', resImage[0].fileUrl)
-    // }
+    const resImage = await postImage(formData)
+    if (resImage) {
+      setValue('logoUrl', resImage[0].fileUrl)
+    }
     setIsLoading(false)
   }
 
@@ -121,16 +118,38 @@ const ModalAddEditCompany: FC<Props> = ({
   const onSubmit = async (data: any) => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    console.log(dataHTML)
+    setIsLoading(true)
+    const res = await updateCompany({ ...data, description: dataHTML })
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Edit company successfully',
+      })
+    }
+    setCompany(res)
+    setOpen(false)
+    setIsLoading(false)
   }
 
-  const valueAvatarUrl = watch('logo')
-
   useEffect(() => {
-    if (valueAvatarUrl !== '') {
-      clearErrors('logo')
+    if (!isUpdateCompanySuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorCompany,
+      })
+      setIsUpdateCompanySuccess(true)
     }
-  }, [valueAvatarUrl])
+  }, [isUpdateCompanySuccess])
+
+  // const valueAvatarUrl = watch('logo')
+
+  // useEffect(() => {
+  //   if (valueAvatarUrl !== '') {
+  //     clearErrors('logo')
+  //   }
+  // }, [valueAvatarUrl])
 
   useEffect(() => {
     if (company) {
@@ -141,6 +160,16 @@ const ModalAddEditCompany: FC<Props> = ({
       setTimeout(() => {
         setEditorState(newEditorState)
       }, 50)
+
+      if (company.logoUrl) {
+        const imagePreview: Image[] = [
+          {
+            name: company?.displayName || '',
+            fileUrl: company?.logoUrl || '',
+          },
+        ]
+        setImages(imagePreview)
+      }
     }
   }, [company])
   return (
@@ -203,6 +232,7 @@ const ModalAddEditCompany: FC<Props> = ({
                                 fieldState: { error },
                               }) => (
                                 <TextFieldV2
+                                  disabled
                                   error={error}
                                   onChange={onChange}
                                   value={value}
@@ -228,7 +258,7 @@ const ModalAddEditCompany: FC<Props> = ({
                                   error={error}
                                   onChange={onChange}
                                   value={value}
-                                  options={optionsGender}
+                                  options={fieldOfActivityData}
                                   empty="Select activity"
                                 />
                               )}
@@ -244,7 +274,7 @@ const ModalAddEditCompany: FC<Props> = ({
                               Logo<span className="text-red-600">*</span>
                             </label>
                             <Controller
-                              name="logo"
+                              name="logoUrl"
                               control={control}
                               render={({ field: {}, fieldState: { error } }) => (
                                 <>
@@ -306,7 +336,7 @@ const ModalAddEditCompany: FC<Props> = ({
                                       error={error}
                                       onChange={onChange}
                                       value={value}
-                                      options={optionsGender}
+                                      options={scaleData}
                                       empty="Select activity"
                                     />
                                   )}

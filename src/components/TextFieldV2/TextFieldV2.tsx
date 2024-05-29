@@ -5,7 +5,7 @@ interface IProps {
   onChange?: any
   placeholder?: string
   disabled?: boolean
-  value?: string
+  value?: string | number | null
   type?: string
   width?: string
   password?: boolean

@@ -2,11 +2,13 @@ import { FC } from 'react'
 import logo from '../../../assets/images/logo.png'
 import Button from '../../../components/Button'
 import { Container } from '../../Container/Container'
-import { HiArrowSmRight } from 'react-icons/hi'
+import { HiArrowSmRight, HiOutlineBell } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import AvatarHeader from '../AvatarHeader/AvatarHeader'
 import { Tooltip } from '@mui/material'
-import SmsIcon from '@mui/icons-material/Sms'
+import { BsChatDots } from 'react-icons/bs'
+import { useStoreState } from 'easy-peasy'
+import { userStateSelector } from '../../../store'
 
 interface Props {}
 
@@ -34,10 +36,14 @@ const navList = [
 ]
 
 const Header: FC<Props> = (props): JSX.Element => {
+  const auth = localStorage.getItem('auth')
   const navigate = useNavigate()
   const handleChangeNav = (path: string) => {
-    navigate(path)
+    if (path === '/manager-cv' && auth === null) {
+      navigate('/auth/login')
+    } else navigate(path)
   }
+  const { currentUserSuccess } = useStoreState(userStateSelector)
   return (
     <div className="fixed top-0 right-0 left-0  h-24 z-[999]  shadow-md bg-gradient-to-r from-gray-100 to-sky-100">
       <Container>
@@ -65,34 +71,51 @@ const Header: FC<Props> = (props): JSX.Element => {
             </ul>
           </div>
 
-          <div className="flex gap-6">
-            <Button
-              typeButton="outline"
-              className="hover:transform hover:translate-y-[-4px]">
-              Sign up
-            </Button>
-            <Button
-              onClick={() => navigate('/auth/login')}
-              className="hover:transform hover:translate-y-[-4px] ">
-              Login
-            </Button>
-            <Button
-              typeButton="black"
-              className="hover:transform hover:translate-y-[-4px] ">
-              For Employers <HiArrowSmRight className="ml-2 text-xl" />
-            </Button>
-          </div>
-
-          {/* <div className="flex gap-4 items-center">
-            <Tooltip title={<h1 className="text-sm">Message</h1>}>
-              <SmsIcon
-                onClick={() => navigate('/message')}
-                className=" text-[#5ba5e9] cursor-pointer"
-                sx={{ fontSize: 32 }}
-              />
-            </Tooltip>
-            <AvatarHeader />
-          </div> */}
+          {!currentUserSuccess ? (
+            <div className="flex gap-6">
+              <Button
+                onClick={() => navigate('/auth/register')}
+                typeButton="outline"
+                className="hover:transform hover:translate-y-[-4px]">
+                Sign up
+              </Button>
+              <Button
+                onClick={() => navigate('/auth/login')}
+                className="hover:transform hover:translate-y-[-4px] ">
+                Login
+              </Button>
+              <Button
+                onClick={() => navigate('/employer/auth/login')}
+                typeButton="black"
+                className="hover:transform hover:translate-y-[-4px] ">
+                For Employers <HiArrowSmRight className="ml-2 text-xl" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex gap-5 items-center">
+              <div className="px-2.5 bg-white rounded-full py-2">
+                <Tooltip title={<h1 className="text-sm">Notification</h1>}>
+                  <div>
+                    <HiOutlineBell
+                      // onClick={() => navigate('/message')}
+                      className=" text-[#5ba5e9] cursor-pointer text-[27px]"
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+              <div className="px-2.5 bg-white rounded-full py-2">
+                <Tooltip title={<h1 className="text-sm">Message</h1>}>
+                  <div>
+                    <BsChatDots
+                      onClick={() => navigate('/message')}
+                      className=" text-[#5ba5e9] cursor-pointer text-[28px]"
+                    />
+                  </div>
+                </Tooltip>
+              </div>
+              <AvatarHeader />
+            </div>
+          )}
         </div>
       </Container>
     </div>

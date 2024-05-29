@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import ChooseTemplate from './components/ChooseTemplate/ChooseTemplate'
 import { Step, StepIconProps, StepLabel, Stepper } from '@mui/material'
 import { styled } from '@mui/material/styles'
@@ -17,6 +17,7 @@ import SkillAndLanguage from './components/SkillAndLanguage'
 import Objective from './components/Objective'
 import { useStoreActions, useStoreState } from 'easy-peasy'
 import { resumeActionSelector, resumeStateSelector } from '../../store'
+import { useParams } from 'react-router-dom'
 
 interface Props {}
 
@@ -85,8 +86,9 @@ function ColorlibStepIcon(props: StepIconProps) {
 const steps = ['Profile', 'Education', 'Experience', 'Skills - Languages', 'Objective']
 
 const DetailResume: FC<Props> = (props): JSX.Element => {
+  const { id } = useParams()
   const { resumeData } = useStoreState(resumeStateSelector)
-  const { setResumeData } = useStoreActions(resumeActionSelector)
+  const { setResumeData, getCVById } = useStoreActions(resumeActionSelector)
   const [activeStep, setActiveStep] = useState(0)
 
   const handleSetTemplate = (template: string) => {
@@ -97,6 +99,19 @@ const DetailResume: FC<Props> = (props): JSX.Element => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+
+  const getCV = async () => {
+    if (id) {
+      const res = await getCVById(id)
+      if (res) {
+        setResumeData({ ...res })
+      }
+    }
+  }
+
+  useEffect(() => {
+    getCV()
+  }, [id])
 
   return (
     <>

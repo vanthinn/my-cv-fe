@@ -22,6 +22,7 @@ import RichTextEditTor from '../../../RichTextEditor'
 import { ContentState, EditorState, convertToRaw } from 'draft-js'
 import draftToHtml from 'draftjs-to-html'
 import htmlToDraft from 'html-to-draftjs'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Props {
   handleBack: () => void
@@ -30,11 +31,39 @@ interface Props {
 }
 
 const schema = yup.object().shape({
-  position: yup.string().required('Email is required'),
-  company: yup.string().required('AvatarUrl is required'),
-  location: yup.string().required('AvatarUrl is required'),
-  startDate: yup.string().required('AvatarUrl is required'),
-  endDate: yup.string().required('AvatarUrl is required'),
+  position: yup.string().required('Position is required'),
+  company: yup.string().required('Company is required'),
+  location: yup.string().required('Location is required'),
+  state: yup.boolean(),
+  startDate: yup
+    .string()
+    .required('Start date is required')
+    .test(
+      'is-less-than-end',
+      'Start date must be earlier than end date',
+      function (value) {
+        const { endDate, state } = this.parent
+        if (state) return true // Skip validation if state is true
+        return value && endDate ? new Date(value) < new Date(endDate) : true
+      },
+    ),
+  endDate: yup
+    .string()
+    .nullable()
+    .when('state', ([state], schema) => {
+      return state === false
+        ? schema
+            .required('End date is required')
+            .test(
+              'is-greater-than-start',
+              'End date must be later than start date',
+              function (value) {
+                const { startDate } = this.parent
+                return startDate && value ? new Date(value) > new Date(startDate) : true
+              },
+            )
+        : schema
+    }),
 })
 
 const newDataEmpty: IExperience = {
@@ -70,10 +99,11 @@ const ExperienceCV: FC<Props> = ({
     state: false,
   }
 
-  const { handleSubmit, control, reset, setValue } = useForm<IExperience>({
-    defaultValues: defaultValues,
-    resolver: yupResolver(schema),
-  })
+  const { handleSubmit, control, reset, setValue, watch, clearErrors } =
+    useForm<IExperience>({
+      defaultValues: defaultValues,
+      resolver: yupResolver(schema) as any,
+    })
 
   const onSubmit = async (data: any) => {
     const experiences = resumeData?.experiences || []
@@ -85,7 +115,7 @@ const ExperienceCV: FC<Props> = ({
     } else {
       const newData = {
         ...data,
-        id: generateRandomId(5),
+        id: uuidv4(),
       }
       setResumeData({ ...resumeData, experiences: [...experiences, newData] })
     }
@@ -117,6 +147,15 @@ const ExperienceCV: FC<Props> = ({
     const newData = resumeData?.experiences.filter((item: any) => item !== data)
     setResumeData({ ...resumeData, experiences: newData })
   }
+
+  const endDateValue = watch('endDate')
+  const stateValue = watch('state')
+
+  useEffect(() => {
+    if (stateValue && endDateValue) {
+      clearErrors('endDate')
+    }
+  }, [stateValue])
 
   useEffect(() => {
     if (itemEdit) {
@@ -232,6 +271,7 @@ const ExperienceCV: FC<Props> = ({
                 control={control}
                 render={({ field: { onChange, value }, fieldState: { error } }) => (
                   <DateTimePicker
+                    disabled={stateValue}
                     error={error}
                     onChange={onChange}
                     value={value}
@@ -286,7 +326,7 @@ const ExperienceCV: FC<Props> = ({
                       {item.company} <HiOutlineCalendar className="mx-2" />{' '}
                       <span>{formatDayVN(item.startDate)}</span>{' '}
                       <HiOutlineMinusSm className="mx-1 text-sx" />{' '}
-                      <span>{formatDayVN(item.endDate)}</span>
+                      {!item.state ? <span>{formatDayVN(item.endDate)}</span> : 'now'}
                     </p>
                   </div>
                   <div className="flex gap-4 items-center">

@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import './styles.css'
 import {
   FormControl,
@@ -14,10 +14,17 @@ import { Controller } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import TextFieldCustom from '../../../components/TextField'
 import Button from '../../../components/Button'
 import { IUser } from '../../../types/IUser'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import {
+  authActionSelector,
+  authStateSelector,
+  notifyActionSelector,
+} from '../../../store'
+import { ROLE_ID, TENANT } from '../../../common/constants'
 
 interface Props {}
 
@@ -39,6 +46,11 @@ const schema = yup.object().shape({
 
 const Register: FC<Props> = (): JSX.Element => {
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const { messageError, isSignUpSuccess } = useStoreState(authStateSelector)
+
+  const { signUp, setIsSignUpSuccess } = useStoreActions(authActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const { handleSubmit, control } = useForm<IUser>({
@@ -48,6 +60,13 @@ const Register: FC<Props> = (): JSX.Element => {
 
   const [showPassword, setShowPassword] = React.useState(false)
 
+  useEffect(() => {
+    if (!isSignUpSuccess && messageError !== '') {
+      setNotifySetting({ show: true, status: 'error', message: messageError })
+      setIsSignUpSuccess(true)
+    }
+  }, [isSignUpSuccess])
+
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -55,7 +74,19 @@ const Register: FC<Props> = (): JSX.Element => {
   }
 
   const onSubmit = async (data: IUser) => {
-    console.log(data)
+    setIsLoading(true)
+    const checkEmployer = pathname.split('/')[1] === 'employer'
+    const newData = checkEmployer
+      ? { ...data, tenantId: TENANT.EMPLOYER, roleId: ROLE_ID.EMPLOYER }
+      : { ...data, tenantId: TENANT.USER, roleId: ROLE_ID.USER }
+    const res = await signUp(newData)
+    if (res) {
+      setNotifySetting({ show: true, status: 'success', message: 'Login successful' })
+      checkEmployer ? navigate('/employer/auth/login') : navigate('/auth/login')
+      setIsLoading(false)
+    } else {
+      setIsLoading(false)
+    }
   }
   return (
     <div className="h-screen relative ">

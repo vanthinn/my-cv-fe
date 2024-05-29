@@ -1,19 +1,15 @@
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { IOption } from '../../types/ICommon'
 
-const people = [
-  { name: 'Wade Cooper' },
-  { name: 'Arlene Mccoy' },
-  { name: 'Devon Webb' },
-  { name: 'Tom Cook' },
-  { name: 'Tanya Fox' },
-  { name: 'Hellen Schmidt' },
-]
+interface IProps {
+  setSelected: (event: any) => void
+  selected: IOption
+  dataOption: IOption[]
+}
 
-export default function SelectedV2() {
-  const [selected, setSelected] = useState(people[0])
-
+export default function SelectedV2({ selected, dataOption, setSelected }: IProps) {
   return (
     <div className="">
       <Listbox
@@ -35,7 +31,7 @@ export default function SelectedV2() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0">
             <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm z-[999]">
-              {people.map((person, personIdx) => (
+              {dataOption.map((person, personIdx) => (
                 <Listbox.Option
                   key={personIdx}
                   className={({ active }) =>

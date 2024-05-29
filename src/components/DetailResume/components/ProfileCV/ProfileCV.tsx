@@ -11,7 +11,12 @@ import { Gender } from '../../../../common/enum'
 import DateTimePicker from '../../../DateTimePicker'
 import MultiImage from '../../../MultiImage'
 import { useStoreActions, useStoreState } from 'easy-peasy'
-import { resumeActionSelector, resumeStateSelector } from '../../../../store'
+import {
+  resumeActionSelector,
+  resumeStateSelector,
+  userActionSelector,
+  userStateSelector,
+} from '../../../../store'
 
 interface Props {
   handleBack: () => void
@@ -35,13 +40,13 @@ const optionsGender: IOption[] = [
 ]
 
 const schema = yup.object().shape({
-  firstName: yup.string().required('Email is required'),
-  lastName: yup.string().required('AvatarUrl is required'),
+  firstName: yup.string().required('FirstName is required'),
+  lastName: yup.string().required('LastName is required'),
   avatarUrl: yup.string().required('AvatarUrl is required'),
-  dateOfBirth: yup.string().required('AvatarUrl is required'),
-  phoneNumber: yup.string().required('AvatarUrl is required'),
-  email: yup.string().required('AvatarUrl is required'),
-  gender: yup.string().required('AvatarUrl is required'),
+  dateOfBirth: yup.string().required('Date of birth is required'),
+  phoneNumber: yup.string().required('Phone number is required'),
+  email: yup.string().required('Email is required'),
+  gender: yup.string().required('Gender is required'),
 })
 
 const ProfileCV: FC<Props> = ({
@@ -49,6 +54,8 @@ const ProfileCV: FC<Props> = ({
   activeStep,
   setActiveStep,
 }: Props): JSX.Element => {
+  const { currentUserSuccess } = useStoreState(userStateSelector)
+  const { postImage } = useStoreActions(userActionSelector)
   const { resumeData } = useStoreState(resumeStateSelector)
   const { setResumeData } = useStoreActions(resumeActionSelector)
   const ImageRef: any = useRef()
@@ -57,14 +64,16 @@ const ProfileCV: FC<Props> = ({
 
   const defaultValues: IProfileCV = {
     id: resumeData?.profile?.id || '',
-    firstName: resumeData?.profile?.firstName || '',
-    lastName: resumeData?.profile?.lastName || '',
+    firstName: resumeData?.profile?.firstName || currentUserSuccess?.firstName || '',
+    lastName: resumeData?.profile?.lastName || currentUserSuccess?.lastName || '',
     avatarUrl: resumeData?.profile?.avatarUrl || '',
-    dateOfBirth: resumeData?.profile?.firstName || '',
-    phoneNumber: resumeData?.profile?.phoneNumber || '',
-    email: resumeData?.profile?.email || '',
-    gender: resumeData?.profile?.gender || '',
-    address: resumeData?.profile?.address || '',
+    dateOfBirth:
+      resumeData?.profile?.dateOfBirth  || currentUserSuccess?.dateOfBirth || '',
+    phoneNumber:
+      resumeData?.profile?.phoneNumber || currentUserSuccess?.phoneNumber || '',
+    email: resumeData?.profile?.email || currentUserSuccess?.email || '',
+    gender: resumeData?.profile?.gender || currentUserSuccess?.gender || '',
+    address: resumeData?.profile?.address || currentUserSuccess?.address || '',
     facebook: resumeData?.profile?.facebook || '',
     linkedin: resumeData?.profile?.linkedin || '',
   }
@@ -81,13 +90,12 @@ const ProfileCV: FC<Props> = ({
 
   const getUrlImage = async (file: any): Promise<void> => {
     setIsLoading(true)
-    setValue('avatarUrl', 'avatar')
     const formData = new FormData()
     formData.append(`documents`, file[0])
-    // const resImage = await postImage(formData)
-    // if (resImage) {
-    //   setValue('avatarUrl', resImage[0].fileUrl)
-    // }
+    const resImage = await postImage(formData)
+    if (resImage) {
+      setValue('avatarUrl', resImage[0].fileUrl)
+    }
     setIsLoading(false)
   }
 
@@ -120,6 +128,18 @@ const ProfileCV: FC<Props> = ({
       clearErrors('avatarUrl')
     }
   }, [valueAvatarUrl])
+
+  useEffect(() => {
+    if (resumeData.profile) {
+      const imagePreview: Image[] = [
+        {
+          name: resumeData?.profile.lastName || '',
+          fileUrl: resumeData?.profile.avatarUrl || '',
+        },
+      ]
+      setImages(imagePreview)
+    }
+  }, [])
 
   return (
     <form

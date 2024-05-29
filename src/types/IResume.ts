@@ -4,8 +4,9 @@ export interface IResume {
     id?: string;
     template?: string;
     title?: string;
+    image?: string;
     fontStyle?: string;
-    fontWeight?: string;
+    fontSize?: string;
     color?: string;
     profile: IProfileCV
     education: IEducation
@@ -14,7 +15,8 @@ export interface IResume {
     languages?: ILanguage[]
     interests?: string[]
     summary?: string
-    certifications?: ICertification[]
+    state?: boolean
+    certificates?: ICertification[]
 }
 
 export interface IProfileCV {
@@ -37,9 +39,9 @@ export interface IEducation {
     location: string;
     fieldOfStudy: string;
     state: string;
-    GPA?: string
-    graduationStartDate: string;
-    graduationEndDate: string;
+    GPA?: number | null
+    startDate: string;
+    endDate: string;
 }
 
 export interface IExperience {
@@ -47,9 +49,9 @@ export interface IExperience {
     position: string;
     company: string
     location: string;
-    state?: boolean
+    state: boolean
     startDate: string;
-    endDate: string;
+    endDate?: string | null;
     description?: string;
 }
 
@@ -69,9 +71,8 @@ export interface IResumeApply {
     id?: string,
     fullName?: string
     job: IRecruitmentResponse
-    cv: IResume
+    CV: IResume
     createdAt?: string
     updatedAt?: string
     status?: string
-
 }

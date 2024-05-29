@@ -31,6 +31,10 @@ export const formatDateTimeLocal = (dateTime: string): string => {
     return formattedTime;
 }
 
+export const formatToMonthYear = (dateTime: string | Date): string => {
+    return dayjs(dateTime).format('MM/YYYY');
+}
+
 
 export const dayComparedToThePast = (dateTime: string): string => {
     const now = dayjs();
@@ -49,6 +53,19 @@ export const dayComparedToThePast = (dateTime: string): string => {
         output = `${diff} hours ago`;
     }
     return output;
+}
+
+export function daysUntil(targetDateStr: string): number {
+    const targetDate = new Date(targetDateStr);
+
+    if (isNaN(targetDate.getTime())) {
+        throw new Error('Invalid date format.');
+    }
+
+    const today = new Date();
+
+    const remainingDays = Math.ceil((targetDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    return remainingDays;
 }
 
 

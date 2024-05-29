@@ -1,11 +1,9 @@
 import { FC, Fragment, useEffect, useState } from 'react'
-import { IOption } from '../../../../types/ICommon'
-import { Gender } from '../../../../common/enum'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { Controller, useForm } from 'react-hook-form'
 import { IRecruitmentRequest } from '../../../../types/IRecruitment'
-import { EditorState, convertToRaw } from 'draft-js'
+import { ContentState, EditorState, convertToRaw } from 'draft-js'
 import draftToHtml from 'draftjs-to-html'
 import { Dialog, Transition } from '@headlessui/react'
 import TextFieldV2 from '../../../../components/TextFieldV2'
@@ -13,60 +11,53 @@ import Selected from '../../../../components/Select'
 import DateTimePicker from '../../../../components/DateTimePicker'
 import RichTextEditTor from '../../../../components/RichTextEditor'
 import Button from '../../../../components/Button'
-import { HiOutlineTrash, HiPlus, HiX } from 'react-icons/hi'
+import { HiPlus, HiX } from 'react-icons/hi'
+import { educationData, experienceAdd, jobTypeData } from '../../../../common/constants'
+import htmlToDraft from 'html-to-draftjs'
 
 interface Props {
   open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  handleAction: (data: any) => Promise<void>
+  data: any
 }
 
-const optionsGender: IOption[] = [
-  {
-    id: Gender.MALE,
-    name: Gender.MALE,
-  },
-  {
-    id: Gender.FEMALE,
-    name: Gender.FEMALE,
-  },
-  {
-    id: Gender.OTHER,
-    name: Gender.OTHER,
-  },
-]
-
 const schema = yup.object().shape({
-  title: yup.string().required('Email is required'),
-  salary: yup.string().required('AvatarUrl is required'),
-  deadline: yup.string().required('AvatarUrl is required'),
-  description: yup.string().required('AvatarUrl is required'),
-  jobType: yup.string().required('AvatarUrl is required'),
-  experience: yup.string().required('AvatarUrl is required'),
+  jobTitle: yup.string().required('Job title is required'),
+  salary: yup.string().required('Salary is required'),
+  deadline: yup.string().required('Deadline is required'),
+  description: yup.string().required('Description is required'),
+  jobType: yup.string().required('Job type is required'),
+  experience: yup.string().required('Experience is required'),
 })
 
-const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
+const ModalAddEditJob: FC<Props> = ({
+  open,
+  setOpen,
+  handleAction,
+  data,
+}: Props): JSX.Element => {
   const defaultValues: IRecruitmentRequest = {
-    id: '',
-    deadline: '',
-    description: '',
-    jobType: '',
-    experience: '',
-    title: '',
-    salary: '',
-    education: '',
-    skills: [],
-    workTime: '',
+    id: data?.id || '',
+    deadline: data?.deadline || '',
+    description: data?.description || '',
+    jobType: data?.jobType || '',
+    experience: data?.experience || '',
+    jobTitle: data?.jobTitle || '',
+    salary: data?.salary || '',
+    education: data?.education || '',
+    skills: data?.skills || [],
+    workTime: data?.workTime || '',
   }
 
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
   const [inputSkills, setInputSkills] = useState<string>('')
-  const [skillsArray, setSkillsArray] = useState<string[]>([])
+  const [skillsArray, setSkillsArray] = useState<string[]>(data?.skills || [])
 
-  const { handleSubmit, control, setValue, watch, clearErrors } =
-    useForm<IRecruitmentRequest>({
-      defaultValues: defaultValues,
-      resolver: yupResolver(schema),
-    })
+  const { handleSubmit, control, setValue, clearErrors } = useForm<IRecruitmentRequest>({
+    defaultValues: defaultValues,
+    resolver: yupResolver(schema),
+  })
 
   const handleChangeInputSkill = (value: any): void => {
     setInputSkills(value.target.value)
@@ -92,9 +83,21 @@ const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
   const onSubmit = async (data: any) => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    console.log(dataHTML)
-    console.log(data)
+    handleAction({ ...data, description: dataHTML })
   }
+
+  useEffect(() => {
+    if (data) {
+      clearErrors('description')
+      const contentBlock = htmlToDraft(data.description)
+      const { contentBlocks, entityMap } = contentBlock
+      const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap)
+      const newEditorState = EditorState.createWithContent(contentState)
+      setTimeout(() => {
+        setEditorState(newEditorState)
+      }, 50)
+    }
+  }, [data])
 
   return (
     <div>
@@ -149,7 +152,7 @@ const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
                               Job title <span className="text-red-600">*</span>
                             </label>
                             <Controller
-                              name="title"
+                              name="jobTitle"
                               control={control}
                               render={({
                                 field: { onChange, value },
@@ -181,7 +184,7 @@ const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
                                   error={error}
                                   onChange={onChange}
                                   value={value}
-                                  options={optionsGender}
+                                  options={experienceAdd}
                                   empty="Select experience"
                                 />
                               )}
@@ -228,7 +231,7 @@ const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
                                   error={error}
                                   onChange={onChange}
                                   value={value || ''}
-                                  options={optionsGender}
+                                  options={educationData}
                                   empty="Select education"
                                 />
                               )}
@@ -251,7 +254,7 @@ const ModalAddEditJob: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
                                   error={error}
                                   onChange={onChange}
                                   value={value}
-                                  options={optionsGender}
+                                  options={jobTypeData}
                                   empty="Select job type"
                                 />
                               )}

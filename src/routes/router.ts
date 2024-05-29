@@ -8,11 +8,15 @@ import BusinessLicense from "../pages/AccountSetting/components/BusinessLicense"
 import ChangePassword from "../pages/AccountSetting/components/ChangePassword";
 import InfoCompany from "../pages/AccountSetting/components/InfoCompany";
 import Profile from "../pages/AccountSetting/components/Profile";
+import Bookmark from "../pages/Bookmark";
 import CVManagement from "../pages/CVManagement";
 import Company from "../pages/Company";
+import CompanyDetail from "../pages/CompanyDetail";
 import EmployerCVManager from "../pages/EmployerCVManager";
+import History from "../pages/History";
 import HomeEmployer from "../pages/HomeEmployer";
 import HomePage from "../pages/HomePage";
+import JobOfferDetail from "../pages/JobOfferDetail/JobOfferDetail";
 import RecruitmentManagement from "../pages/RecruitmentManagement";
 import DetailJob from "../pages/RecruitmentManagement/components/DetailJob/DetailJob";
 
@@ -20,8 +24,14 @@ export const routerUser = [
     { path: ROUTER_USER.HOME, element: HomePage, layout: DefaultLayout },
     { path: ROUTER_USER.MANAGEMENT_CV, element: CVManagement, layout: DefaultLayout },
     { path: ROUTER_USER.NEW_RESUME, element: DetailResume, layout: DefaultLayout },
+    { path: ROUTER_USER.CV_DETAIL, element: DetailResume, layout: DefaultLayout },
     { path: ROUTER_USER.COMPANY, element: Company, layout: DefaultLayout },
-    { path: ROUTER_USER.PREVIEW_RESUME, element: PreviewResume, layout: DefaultLayout }
+    { path: ROUTER_USER.COMPANY_DETAIL, element: CompanyDetail, layout: DefaultLayout },
+    { path: ROUTER_USER.PREVIEW_RESUME, element: PreviewResume, layout: DefaultLayout },
+    { path: ROUTER_USER.BOOKMARK, element: Bookmark, layout: DefaultLayout },
+    { path: ROUTER_USER.JOB_DETAIL, element: JobOfferDetail, layout: DefaultLayout },
+    { path: ROUTER_USER.HISTORY, element: History, layout: DefaultLayout }
+
 ];
 
 export const routerEmployer = [

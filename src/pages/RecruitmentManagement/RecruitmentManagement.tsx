@@ -11,33 +11,34 @@ import Table from '../../components/Table'
 import { IRecruitmentResponse } from '../../types/IRecruitment'
 import { useNavigate } from 'react-router-dom'
 import ModalAddEditJob from './components/ModalAddEditJob'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import {
+  companyStateSelector,
+  jobActionSelector,
+  jobStateSelector,
+  notifyActionSelector,
+} from '../../store'
+import test from '../../assets/images/Nhung-nguoi-cam-lap-cty.png'
+import { useDebounce } from '../../hooks/useDebounce'
+import { formatDayVN } from '../../utils/functions/formatDay'
 interface Props {}
-
-const fakeData = [
-  {
-    id: '1223456',
-    title: 'Front-end',
-    salary: '10tr - 12tr',
-    jobType: 'Full time',
-    experience: 'More than 1 year',
-    createdAt: '2024-5-5',
-    deadline: '2024-6-6',
-  },
-  {
-    id: '12234567',
-    title: 'Front-end',
-    salary: '10tr - 12tr',
-    jobType: 'Full time',
-    experience: 'More than 1 year',
-    createdAt: '2024-5-5',
-    deadline: '2024-6-6',
-  },
-]
 
 const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
   const navigate = useNavigate()
+  const { messageErrorJob, isCreateJobSuccess, isUpdateJobSuccess } =
+    useStoreState(jobStateSelector)
+  const {
+    createJob,
+    setIsCreateJobSuccess,
+    getAllJob,
+    updateJob,
+    setIsUpdateJobSuccess,
+  } = useStoreActions(jobActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
+  const { company } = useStoreState(companyStateSelector)
   const [inputSearch, setInputSearch] = useState<string>('')
   const [rowsData, setRows] = useState<IRecruitmentResponse[]>([])
+  const [rowSelected, setRowSelected] = useState<IRecruitmentResponse>()
   const [rowTotal, setRowTotal] = useState(0)
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -53,22 +54,87 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [isOpenModalAddEdit, setIsOpenModalAddEdit] = useState<boolean>(false)
 
-  useEffect(() => {
-    setRowTotal(fakeData?.length)
-    const data = fakeData?.map((item: any, index: number) => ({
-      ...item,
-      tag: paginationModel.page * paginationModel.pageSize + index + 1,
-    }))
-    setRows(data)
-  }, [sortModel, paginationModel])
+  const getAllJobHome = async () => {
+    setLoading(true)
+    const res = await getAllJob({
+      skip: paginationModel.page * paginationModel.pageSize,
+      take: paginationModel.pageSize,
+      search: inputSearch,
+      companyId: company?.id,
+    })
+    if (res) {
+      const data = res.data?.map((item: any, index: number) => ({
+        ...item,
+        tag: paginationModel.page * paginationModel.pageSize + index + 1,
+      }))
+      setRowTotal(res?.totalRecords)
+      setRows(data)
+    }
+    setLoading(false)
+  }
 
   const handleChangeSearch = (value: any): void => {
     setInputSearch(value.target.value)
   }
 
+  const handleAction = async (data: any) => {
+    setLoading(true)
+    if (rowSelected) {
+      const res = await updateJob({ ...data })
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Update job successfully',
+        })
+        getAllJobHome()
+      }
+    } else {
+      const res = await createJob({ ...data })
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Create job successfully',
+        })
+        getAllJobHome()
+      }
+    }
+    setIsOpenModalAddEdit(false)
+    setLoading(false)
+  }
+
   const handleSortModelChange = useCallback((newSortModel: GridSortModel) => {
     setSortModel(newSortModel)
   }, [])
+
+  useEffect(() => {
+    if (!isCreateJobSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorJob,
+      })
+      setIsCreateJobSuccess(true)
+    }
+  }, [isCreateJobSuccess])
+
+  useEffect(() => {
+    if (!isUpdateJobSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorJob,
+      })
+      setIsUpdateJobSuccess(true)
+    }
+  }, [isUpdateJobSuccess])
+
+  const debounced = useDebounce(inputSearch, 500)
+
+  useEffect(() => {
+    getAllJobHome()
+  }, [paginationModel, sortModel, debounced])
 
   const columnsRecruitment = [
     {
@@ -94,8 +160,8 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       headerAlign: 'left',
       hideable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
-        <Tooltip title={params.row.title}>
-          <p className={`text-black line-clamp-1`}>{params.row.title}</p>
+        <Tooltip title={params.row.jobTitle}>
+          <p className={`text-black line-clamp-1`}>{params.row.jobTitle}</p>
         </Tooltip>
       ),
     },
@@ -158,8 +224,8 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       hideable: false,
       sortable: false,
       renderCell: (params: GridRenderCellParams<any, number>) => (
-        <Tooltip title={params.row.createdAt}>
-          <p className={`text-black line-clamp-1`}>{params.row.createdAt}</p>
+        <Tooltip title={formatDayVN(params.row.createdAt)}>
+          <p className={`text-black line-clamp-1`}>{formatDayVN(params.row.createdAt)}</p>
         </Tooltip>
       ),
     },
@@ -175,8 +241,8 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       hideable: false,
       sortable: false,
       renderCell: (params: GridRenderCellParams<any, number>) => (
-        <Tooltip title={params.row.deadline}>
-          <p className={`text-black line-clamp-1`}>{params.row.deadline}</p>
+        <Tooltip title={formatDayVN(params.row.deadline)}>
+          <p className={`text-black line-clamp-1`}>{formatDayVN(params.row.deadline)}</p>
         </Tooltip>
       ),
     },
@@ -209,7 +275,10 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
           />
           <EditIcon
             sx={{ cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={() => {
+              setRowSelected(params.params.row)
+              setIsOpenModalAddEdit(true)
+            }}
           />
           <DeleteIcon
             sx={{ color: '#d32f2f', cursor: 'pointer' }}
@@ -222,42 +291,64 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
   return (
     <>
       <div className="p-4 bg-white rounded-md flex-1 flex flex-col shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px]">
-        <h4 className="font-semibold text-xl">Recruitment management</h4>
+        {company ? (
+          <>
+            <h4 className="font-semibold text-xl">Recruitment management</h4>
 
-        <div className="mt-4 flex justify-between">
-          <TextFieldV2
-            type="search"
-            onChange={handleChangeSearch}
-            value={inputSearch}
-            placeholder="Search by candidate name"
-            width="350px"
-          />
-          <Button
-            onClick={() => setIsOpenModalAddEdit(true)}
-            className="flex items-center">
-            <HiPlusSm className="mr-2 text-xl" />
-            Add new job
-          </Button>
-        </div>
+            <div className="mt-4 flex justify-between">
+              <TextFieldV2
+                type="search"
+                onChange={handleChangeSearch}
+                value={inputSearch}
+                placeholder="Search by candidate name"
+                width="350px"
+              />
+              <Button
+                onClick={() => setIsOpenModalAddEdit(true)}
+                className="flex items-center">
+                <HiPlusSm className="mr-2 text-xl" />
+                Add new job
+              </Button>
+            </div>
 
-        <div className="mt-3 w-full overflow-x-hidden">
-          <Table
-            columns={columnsRecruitment}
-            rows={rowsData}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            paginationModel={paginationModel}
-            onPaginationModelChange={setPaginationModel}
-            loading={loading}
-            totalRow={rowTotal}
-          />
-        </div>
+            <div className="mt-3 w-full overflow-x-hidden">
+              <Table
+                columns={columnsRecruitment}
+                rows={rowsData}
+                sortModel={sortModel}
+                onSortModelChange={handleSortModelChange}
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                loading={loading}
+                totalRow={rowTotal}
+              />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col h-full w-full flex-1 justify-center items-center">
+            <span className="text-xl font-semibold">
+              Please fully update company information before posting the job
+              <img
+                className=" h-36 w-auto mx-auto mt-4"
+                src={test}
+                alt=""
+              />
+            </span>
+            <Button
+              onClick={() => navigate('/employer/account-setting/info-company')}
+              className="mx-auto mt-6">
+              Direction
+            </Button>
+          </div>
+        )}
       </div>
 
       {isOpenModalAddEdit && (
         <ModalAddEditJob
           open={isOpenModalAddEdit}
           setOpen={setIsOpenModalAddEdit}
+          data={rowSelected}
+          handleAction={handleAction}
         />
       )}
     </>

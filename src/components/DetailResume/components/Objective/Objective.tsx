@@ -12,9 +12,14 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import DateTimePicker from '../../../DateTimePicker'
 import { useStoreActions, useStoreState } from 'easy-peasy'
-import { resumeActionSelector, resumeStateSelector } from '../../../../store'
+import {
+  notifyActionSelector,
+  resumeActionSelector,
+  resumeStateSelector,
+  userActionSelector,
+} from '../../../../store'
 import htmlToDraft from 'html-to-draftjs'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 interface Props {
   handleBack: () => void
@@ -23,22 +28,31 @@ interface Props {
 }
 
 const schema = yup.object().shape({
-  certifications: yup.array().of(
+  certificates: yup.array().of(
     yup.object().shape({
       id: yup.string(),
-      certification: yup.string().required('Certification is required'),
+      displayName: yup.string().required('Certification is required'),
       date: yup.string().required('date is required'),
     }),
   ),
 })
 
 const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element => {
+  const { id } = useParams()
   const navigate = useNavigate()
-  const { resumeData } = useStoreState(resumeStateSelector)
-  const { setResumeData } = useStoreActions(resumeActionSelector)
+  const { resumeData, isCreateResumeSuccess, messageErrorResume, isUpdateCVSuccess } =
+    useStoreState(resumeStateSelector)
+  const {
+    setResumeData,
+    createResume,
+    setIsCreateResumeSuccess,
+    updateCV,
+    setIsUpdateCVByIdSuccess,
+  } = useStoreActions(resumeActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const interests = resumeData?.interests || []
-  const certificationsDefault = resumeData?.certifications || [
-    { id: '', certification: '', date: '' },
+  const certificationsDefault = resumeData?.certificates || [
+    { id: '', displayName: '', date: '' },
   ]
   const summary = resumeData?.summary
   const formRef = useRef<HTMLFormElement>(null)
@@ -61,24 +75,59 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      certifications: certificationsDefault,
+      certificates: certificationsDefault,
     },
   })
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'certifications',
+    name: 'certificates',
   })
 
-  const onSubmit = (data: any) => {
+  const onSubmit = async (data: any) => {
     const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-    setResumeData({
-      ...resumeData,
-      certifications: data.certifications,
-      summary: dataHTML,
-    })
 
-    navigate('/preview-cv')
+    if (id) {
+      const res = await updateCV({
+        ...resumeData,
+        certificates: data.certificates,
+        summary: dataHTML,
+      })
+      if (res) {
+        setResumeData({
+          ...resumeData,
+          id: res.id,
+          certificates: data.certificates,
+          summary: dataHTML,
+        })
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Update CV successful',
+        })
+        navigate('/preview-cv/' + id)
+      }
+    } else {
+      const res = await createResume({
+        ...resumeData,
+        certificates: data.certificates,
+        summary: dataHTML,
+      })
+      if (res) {
+        setResumeData({
+          ...resumeData,
+          id: res.id,
+          certificates: data.certificates,
+          summary: dataHTML,
+        })
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Create CV successful',
+        })
+        navigate('/preview-cv/' + res.id)
+      }
+    }
   }
 
   const handleNext = (e: React.MouseEvent<HTMLButtonElement>): void => {
@@ -89,6 +138,28 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
       )
     }
   }
+
+  useEffect(() => {
+    if (!isCreateResumeSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorResume,
+      })
+      setIsCreateResumeSuccess(true)
+    }
+  }, [isCreateResumeSuccess])
+
+  useEffect(() => {
+    if (!isUpdateCVSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorResume,
+      })
+      setIsUpdateCVByIdSuccess(true)
+    }
+  }, [isUpdateCVSuccess])
 
   useEffect(() => {
     if (summary) {
@@ -114,7 +185,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
           <TextFieldV2
             onChange={handleChangeInputHobbies}
             value={inputHobbies}
-            placeholder="eg. Footer ball, play games"
+            placeholder="eg. Football, play games"
             width="400px"
           />
 
@@ -154,13 +225,13 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
             <React.Fragment key={field.id}>
               <div className="flex flex-col ">
                 <label
-                  htmlFor={`certifications[${index}].certification`}
+                  htmlFor={`certificates[${index}].certificate`}
                   className="font-semibold text-gray-700 mb-1">
                   Certification
                 </label>
                 <Controller
                   name={
-                    `certifications[${index}].certification` as `certifications.${number}.certification`
+                    `certificates[${index}].displayName` as `certificates.${number}.displayName`
                   }
                   control={control}
                   defaultValue=""
@@ -181,9 +252,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
                   Date
                 </label>
                 <Controller
-                  name={
-                    `certifications[${index}].date` as `certifications.${number}.date`
-                  }
+                  name={`certificates[${index}].date` as `certificates.${number}.date`}
                   control={control}
                   render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <DateTimePicker
@@ -205,7 +274,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
         <Button
           type="button"
           className="mt-6"
-          onClick={() => append({ certification: '', date: '' })}>
+          onClick={() => append({ displayName: '', date: '' })}>
           <HiPlus className="text-xl mr-2" /> Add another
         </Button>
       </form>

@@ -9,27 +9,16 @@ import Button from '../../../../components/Button'
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { IResumeApply } from '../../../../types/IResume'
 import { formatDateLocalV2 } from '../../../../utils/functions/formatDay'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import { companyStateSelector, jobActionSelector } from '../../../../store'
+import ModalShowImageCV from '../../../RecruitmentManagement/components/ModalShowImageCV'
+import { useDebounce } from '../../../../hooks/useDebounce'
 
 interface Props {}
 
 interface IActionMenu {
   params: any
 }
-
-const fakeData = [
-  {
-    id: '12644',
-    fullName: 'Nguyen Van Thinh',
-    email: 'vanthinh@gmail.com',
-    job: {
-      title: 'Front-end',
-    },
-    cv: {
-      id: 122123,
-    },
-    createdAt: '2022-04-24',
-  },
-]
 
 function ActionsMenu({ params }: IActionMenu) {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -99,6 +88,8 @@ function ActionsMenu({ params }: IActionMenu) {
 }
 
 const TabAllCV: FC<Props> = (props): JSX.Element => {
+  const { getAllJobApply } = useStoreActions(jobActionSelector)
+  const { company } = useStoreState(companyStateSelector)
   const [inputSearch, setInputSearch] = useState<string>('')
   const [rowsData, setRows] = useState<IResumeApply[]>([])
   const [rowTotal, setRowTotal] = useState(0)
@@ -109,20 +100,38 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     {
-      field: 'name',
+      field: 'candidateName',
       sort: 'asc',
     },
   ])
   const [loading, setLoading] = useState<boolean>(false)
+  const [imageCV, setImageCV] = useState('')
+  const [openModalCV, setOpenModalCV] = useState(false)
+
+  const getAllJobApplyHome = async () => {
+    setLoading(true)
+    const res = await getAllJobApply({
+      skip: paginationModel.page * paginationModel.pageSize,
+      take: paginationModel.pageSize,
+      search: inputSearch,
+      companyId: company?.id,
+    })
+    if (res) {
+      const data = res.data?.map((item: any, index: number) => ({
+        ...item,
+        tag: paginationModel.page * paginationModel.pageSize + index + 1,
+      }))
+      setRowTotal(res?.totalRecords)
+      setRows(data)
+    }
+    setLoading(false)
+  }
+
+  const debounceSearch = useDebounce(inputSearch, 500)
 
   useEffect(() => {
-    setRowTotal(fakeData?.length)
-    const data = fakeData?.map((item: any, index: number) => ({
-      ...item,
-      tag: paginationModel.page * paginationModel.pageSize + index + 1,
-    }))
-    setRows(data)
-  }, [sortModel, paginationModel])
+    getAllJobApplyHome()
+  }, [sortModel, paginationModel, debounceSearch])
 
   const handleChangeSearch = (value: any): void => {
     setInputSearch(value.target.value)
@@ -147,7 +156,7 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       disableColumnMenu: true,
     },
     {
-      field: 'fullName',
+      field: 'candidateName',
       headerName: 'Candidate Name',
       flex: 1.5,
       minWidth: 150,
@@ -157,12 +166,12 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       hideable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <Tooltip title={params.row.fullName}>
-          <p className={`text-black line-clamp-1`}>{params.row.fullName}</p>
+          <p className={`text-black line-clamp-1`}>{params.row.candidateName}</p>
         </Tooltip>
       ),
     },
     {
-      field: 'title',
+      field: 'jobTitle',
       headerName: 'Job Title',
       flex: 1.5,
       minWidth: 150,
@@ -172,7 +181,7 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       hideable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <Tooltip title={params.row.job.title}>
-          <p className={`text-black line-clamp-1`}>{params.row.job.title}</p>
+          <p className={`text-black line-clamp-1`}>{params.row.job.jobTitle}</p>
         </Tooltip>
       ),
     },
@@ -220,7 +229,12 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       disableColumnMenu: true,
       hideable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
-        <li className="list-none text-blue-500 cursor-pointer hover:underline hover:text-violet-700  ">
+        <li
+          onClick={() => {
+            setImageCV(params.row.CV.image)
+            setOpenModalCV(true)
+          }}
+          className="list-none text-blue-500 cursor-pointer hover:underline hover:text-violet-700  ">
           detail cv
         </li>
       ),
@@ -241,29 +255,39 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
     },
   ]
   return (
-    <div>
-      <div className="mt-4">
-        <TextFieldV2
-          type="search"
-          onChange={handleChangeSearch}
-          value={inputSearch}
-          placeholder="Search by candidate name"
-          width="350px"
-        />
+    <>
+      <div>
+        <div className="mt-4">
+          <TextFieldV2
+            type="search"
+            onChange={handleChangeSearch}
+            value={inputSearch}
+            placeholder="Search by candidate name"
+            width="350px"
+          />
+        </div>
+        <div className="mt-3 w-full overflow-x-hidden">
+          <Table
+            columns={columnsCVApply}
+            rows={rowsData}
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            loading={loading}
+            totalRow={rowTotal}
+          />
+        </div>
       </div>
-      <div className="mt-3 w-full overflow-x-hidden">
-        <Table
-          columns={columnsCVApply}
-          rows={rowsData}
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          loading={loading}
-          totalRow={rowTotal}
+
+      {openModalCV && (
+        <ModalShowImageCV
+          open={openModalCV}
+          setOpen={setOpenModalCV}
+          image={imageCV}
         />
-      </div>
-    </div>
+      )}
+    </>
   )
 }
 

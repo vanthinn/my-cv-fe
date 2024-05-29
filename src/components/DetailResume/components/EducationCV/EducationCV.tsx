@@ -18,12 +18,37 @@ interface Props {
 }
 
 const schema = yup.object().shape({
-  schoolName: yup.string().required('Email is required'),
-  location: yup.string().required('AvatarUrl is required'),
-  fieldOfStudy: yup.string().required('AvatarUrl is required'),
-  state: yup.string().required('AvatarUrl is required'),
-  graduationEndDate: yup.string().required('AvatarUrl is required'),
-  graduationStartDate: yup.string().required('AvatarUrl is required'),
+  schoolName: yup.string().required('SchoolName is required'),
+  location: yup.string().required('Location is required'),
+  fieldOfStudy: yup.string().required('Field of study is required'),
+  state: yup.string().required('State is required'),
+  startDate: yup
+    .string()
+    .required('Start date is required')
+    .test(
+      'is-less-than-end',
+      'Start date must be earlier than end date',
+      function (value) {
+        const { endDate } = this.parent
+        return value && endDate ? new Date(value) < new Date(endDate) : true
+      },
+    ),
+  endDate: yup
+    .string()
+    .required('End date is required')
+    .test(
+      'is-greater-than-start',
+      'End date must be later than start date',
+      function (value) {
+        const { startDate } = this.parent
+        return startDate && value ? new Date(value) > new Date(startDate) : true
+      },
+    ),
+  GPA: yup
+    .number()
+    .nullable()
+    .max(4, 'GPA must be 4 or less')
+    .typeError('GPA must be a number'),
 })
 
 const EducationCV: FC<Props> = ({
@@ -40,9 +65,9 @@ const EducationCV: FC<Props> = ({
     location: resumeData?.education?.location || '',
     fieldOfStudy: resumeData?.education?.fieldOfStudy || '',
     state: resumeData?.education?.state || '',
-    GPA: resumeData?.education?.GPA || '',
-    graduationEndDate: resumeData?.education?.graduationEndDate || '',
-    graduationStartDate: resumeData?.education?.graduationStartDate || '',
+    GPA: resumeData?.education?.GPA || null,
+    startDate: resumeData?.education?.startDate || '',
+    endDate: resumeData?.education?.endDate || '',
   }
   const { handleSubmit, control } = useForm<IEducation>({
     defaultValues: defaultValues,
@@ -161,10 +186,10 @@ const EducationCV: FC<Props> = ({
           <label
             htmlFor=""
             className="font-semibold text-gray-700">
-            Graduation Start Date <span className="text-red-600">*</span>
+            Start Date <span className="text-red-600">*</span>
           </label>
           <Controller
-            name="graduationStartDate"
+            name="startDate"
             control={control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <DateTimePicker
@@ -180,10 +205,10 @@ const EducationCV: FC<Props> = ({
           <label
             htmlFor=""
             className="font-semibold text-gray-700">
-            Graduation End Date <span className="text-red-600">*</span>
+            End Date <span className="text-red-600">*</span>
           </label>
           <Controller
-            name="graduationEndDate"
+            name="endDate"
             control={control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <DateTimePicker
