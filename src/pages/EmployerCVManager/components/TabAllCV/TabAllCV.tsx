@@ -10,7 +10,12 @@ import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { IResumeApply } from '../../../../types/IResume'
 import { formatDateLocalV2 } from '../../../../utils/functions/formatDay'
 import { useStoreActions, useStoreState } from 'easy-peasy'
-import { companyStateSelector, jobActionSelector } from '../../../../store'
+import {
+  companyStateSelector,
+  jobActionSelector,
+  jobStateSelector,
+  notifyActionSelector,
+} from '../../../../store'
 import ModalShowImageCV from '../../../RecruitmentManagement/components/ModalShowImageCV'
 import { useDebounce } from '../../../../hooks/useDebounce'
 
@@ -18,11 +23,29 @@ interface Props {}
 
 interface IActionMenu {
   params: any
+  getAllJobApplyHome: any
 }
 
-function ActionsMenu({ params }: IActionMenu) {
+function ActionsMenu({ params, getAllJobApplyHome }: IActionMenu) {
+  const { updateStatusJobApply, setIsUpdateStatusJobApplySuccess } =
+    useStoreActions(jobActionSelector)
+  const { isUpdateStatusJobApplySuccess, messageErrorJob } =
+    useStoreState(jobStateSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
+
   const [anchorEl, setAnchorEl] = useState(null)
   const [loading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (!isUpdateStatusJobApplySuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorJob,
+      })
+      setIsUpdateStatusJobApplySuccess(true)
+    }
+  }, [isUpdateStatusJobApplySuccess])
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget)
@@ -32,9 +55,29 @@ function ActionsMenu({ params }: IActionMenu) {
     setAnchorEl(null)
   }
 
-  const handleApproveClick = async () => {}
+  const handleApproveClick = async () => {
+    const res = await updateStatusJobApply({ id: params.id, status: 'APPROVED' })
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Approved cv successful',
+      })
+      getAllJobApplyHome()
+    }
+  }
 
-  const handleRejectClick = async () => {}
+  const handleRejectClick = async () => {
+    const res = await updateStatusJobApply({ id: params.id, status: 'REJECT' })
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Reject cv successful',
+      })
+      getAllJobApplyHome()
+    }
+  }
 
   return (
     <>
@@ -115,6 +158,7 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       take: paginationModel.pageSize,
       search: inputSearch,
       companyId: company?.id,
+      status: 'PENDING',
     })
     if (res) {
       const data = res.data?.map((item: any, index: number) => ({
@@ -250,7 +294,10 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       sortable: false,
       disableSelectionOnClick: false,
       renderCell: (params: GridRenderCellParams<any, any>) => (
-        <ActionsMenu params={params} />
+        <ActionsMenu
+          params={params}
+          getAllJobApplyHome={getAllJobApplyHome}
+        />
       ),
     },
   ]

@@ -40,7 +40,7 @@ const TabCVApprove: FC<Props> = (props): JSX.Element => {
       take: paginationModel.pageSize,
       search: inputSearch,
       companyId: company?.id,
-      status: 'APPROVE',
+      status: 'APPROVED',
     })
     if (res) {
       const data = res.data?.map((item: any, index: number) => ({

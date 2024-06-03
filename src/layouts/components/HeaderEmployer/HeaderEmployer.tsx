@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import logo from '../../../assets/images/logongang.png'
 import {
   HiOutlineBell,
@@ -11,21 +11,75 @@ import { useStoreActions, useStoreState } from 'easy-peasy'
 import {
   authActionSelector,
   companyActionSelector,
+  conversationActionSelector,
+  conversationStateSelector,
   notifyActionSelector,
   userActionSelector,
   userStateSelector,
 } from '../../../store'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import socket from '../../../utils/socket/socketConfig'
+import { IMessage } from '../../../types/IConversation'
 
 interface Props {}
 
 const HeaderEmployer: FC<Props> = (props): JSX.Element => {
+  const { id } = useParams()
+  const { pathname } = useLocation()
   const navigate = useNavigate()
   const { setCompany } = useStoreActions(companyActionSelector)
   const { currentUserSuccess } = useStoreState(userStateSelector)
   const { setCurrentUserSuccess } = useStoreActions(userActionSelector)
   const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const { setIsLoginSuccess, setMessageError } = useStoreActions(authActionSelector)
+
+  const { setCurrentConverSationMessage, setListConversation } = useStoreActions(
+    conversationActionSelector,
+  )
+  const { currentConverSationMessage, listConversation } = useStoreState(
+    conversationStateSelector,
+  )
+
+  const handleNewMessage = (response: IMessage) => {
+    console.log(response)
+    const location = pathname.split('/')[1]
+
+    if (
+      location !== 'message' &&
+      location !== 'employer' &&
+      response?.author.id !== currentUserSuccess?.id
+    ) {
+      // setNotifyRealtime({ show: true, message: response, type: 'message' })
+    } else {
+      if (
+        response?.author.id !== currentUserSuccess?.id &&
+        response?.conversationId === id
+      ) {
+        setCurrentConverSationMessage([response, ...currentConverSationMessage])
+      }
+      const getConversationAdd = listConversation.find((item: any) => {
+        return item.id === response.conversationId
+      })
+      if (getConversationAdd) {
+        const newConversation = {
+          ...getConversationAdd,
+          isRead: response?.author.id === currentUserSuccess?.id,
+          lastMessage: response,
+        }
+        const newList = listConversation.filter((item: any) => {
+          return item.id !== response.conversationId
+        })
+        setListConversation([newConversation, ...newList])
+      }
+    }
+  }
+
+  useEffect(() => {
+    socket.on('onMessage', handleNewMessage)
+    return () => {
+      socket.off('onMessage', handleNewMessage)
+    }
+  }, [id, currentUserSuccess?.id, listConversation, currentConverSationMessage])
 
   const _logout = (): void => {
     navigate('/')

@@ -14,3 +14,8 @@ export interface pageMode {
     page: number,
     pageSize: number
 }
+
+export interface IParams {
+    id?: string;
+    params?: any
+}

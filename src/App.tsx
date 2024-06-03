@@ -17,6 +17,7 @@ import { useEffect } from 'react'
 import NotFound from './pages/NotFound'
 import ProtectedRouteEmployer from './routes/ProtectedRouteEmployer/ProtectedRouteEmployer'
 import ProtectedRouteUser from './routes/ProtectedRouteUser/ProtectedRouteUser'
+import socket from './utils/socket/socketConfig'
 
 function App() {
   const { notifySetting } = useStoreState(notifyStateSelector)
@@ -24,7 +25,7 @@ function App() {
   const { setCompany } = useStoreActions(companyActionSelector)
 
   const { getCurrentUser } = useStoreActions(userActionSelector)
-  const { accessToken } = useStoreState(authStateSelector)
+  const { accessToken, isLoginSuccess } = useStoreState(authStateSelector)
   const { setAccessToken } = useStoreActions(authActionSelector)
   const auth: any = JSON.parse(String(localStorage.getItem('auth')))
 
@@ -44,6 +45,20 @@ function App() {
   useEffect(() => {
     if (accessToken) getCurrentUserApp()
   }, [accessToken])
+
+  useEffect(() => {
+    const auth: any = JSON.parse(String(localStorage.getItem('auth')))
+    if (isLoginSuccess && auth?.accessToken) {
+      socket.auth = {
+        token: auth.accessToken,
+      }
+
+      socket.connect()
+      socket.on('connect', () => {
+        console.log('Socket connected')
+      })
+    }
+  }, [isLoginSuccess])
   return (
     <>
       <Routes>

@@ -174,11 +174,11 @@ const HomePage: FC<Props> = (props): JSX.Element => {
               <li className="list-none px-2.5 py-1 bg-blue-400 text-white rounded-md text-sm">
                 {job.jobType}
               </li>
-              {job.education && (
+              {/* {job.education && (
                 <li className="list-none px-2.5 py-1 bg-blue-400 text-white rounded-md text-sm">
                   {job.education}
                 </li>
-              )}
+              )} */}
             </div>
 
             <div

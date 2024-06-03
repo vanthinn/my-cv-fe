@@ -1,14 +1,20 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import logo from '../../../assets/images/logo.png'
 import Button from '../../../components/Button'
 import { Container } from '../../Container/Container'
 import { HiArrowSmRight, HiOutlineBell } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import AvatarHeader from '../AvatarHeader/AvatarHeader'
 import { Tooltip } from '@mui/material'
 import { BsChatDots } from 'react-icons/bs'
-import { useStoreState } from 'easy-peasy'
-import { userStateSelector } from '../../../store'
+import { useStoreActions, useStoreState } from 'easy-peasy'
+import {
+  conversationActionSelector,
+  conversationStateSelector,
+  userStateSelector,
+} from '../../../store'
+import { IMessage } from '../../../types/IConversation'
+import socket from '../../../utils/socket/socketConfig'
 
 interface Props {}
 
@@ -35,8 +41,10 @@ const navList = [
   },
 ]
 
-const Header: FC<Props> = (props): JSX.Element => {
+const Header: FC<Props> = (): JSX.Element => {
+  const { id } = useParams()
   const auth = localStorage.getItem('auth')
+  const { pathname } = useLocation()
   const navigate = useNavigate()
   const handleChangeNav = (path: string) => {
     if (path === '/manager-cv' && auth === null) {
@@ -44,6 +52,49 @@ const Header: FC<Props> = (props): JSX.Element => {
     } else navigate(path)
   }
   const { currentUserSuccess } = useStoreState(userStateSelector)
+  const { setCurrentConverSationMessage, setListConversation } = useStoreActions(
+    conversationActionSelector,
+  )
+  const { currentConverSationMessage, listConversation } = useStoreState(
+    conversationStateSelector,
+  )
+
+  const handleNewMessage = (response: IMessage) => {
+    console.log(response)
+    const location = pathname.split('/')[1]
+
+    if (location !== 'message' && response?.author.id !== currentUserSuccess?.id) {
+      // setNotifyRealtime({ show: true, message: response, type: 'message' })
+    } else {
+      if (
+        response?.author.id !== currentUserSuccess?.id &&
+        response?.conversationId === id
+      ) {
+        setCurrentConverSationMessage([response, ...currentConverSationMessage])
+      }
+      const getConversationAdd = listConversation.find((item: any) => {
+        return item.id === response.conversationId
+      })
+      if (getConversationAdd) {
+        const newConversation = {
+          ...getConversationAdd,
+          isRead: response?.author.id === currentUserSuccess?.id,
+          lastMessage: response,
+        }
+        const newList = listConversation.filter((item: any) => {
+          return item.id !== response.conversationId
+        })
+        setListConversation([newConversation, ...newList])
+      }
+    }
+  }
+
+  useEffect(() => {
+    socket.on('onMessage', handleNewMessage)
+    return () => {
+      socket.off('onMessage', handleNewMessage)
+    }
+  }, [id, currentUserSuccess?.id, listConversation, currentConverSationMessage])
   return (
     <div className="fixed top-0 right-0 left-0  h-24 z-[999]  shadow-md bg-gradient-to-r from-gray-100 to-sky-100">
       <Container>

@@ -65,5 +65,13 @@ const getAllJobApply = (params: any) => {
     });
 }
 
+const updateStatusJobApply = (data: { id: string, status: string }) => {
+    return BaseURL({
+        url: `/job-apply/update-status`,
+        method: "PATCH",
+        data,
+    });
+}
 
-export { getAllJobOffer, getJobById, applyJob, createJob, updateJob, getJoBApplyByJobId, deleteJobApply, getAllJobApply }
+
+export { getAllJobOffer, getJobById, applyJob, createJob, updateJob, getJoBApplyByJobId, deleteJobApply, getAllJobApply, updateStatusJobApply }

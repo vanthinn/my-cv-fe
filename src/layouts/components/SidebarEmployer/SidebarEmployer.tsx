@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { DATA_SIDEBAR } from '../../../common/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
+  HiOutlineChatAlt2,
   HiOutlineClipboardList,
   HiOutlineCog,
   HiOutlineUserCircle,
@@ -45,14 +46,14 @@ const SidebarEmployer: FC<Props> = (props): JSX.Element => {
         result = <HiOutlineUserCircle className="inline-block h-6 w-6" />
         break
       }
+      case 'chat': {
+        result = <HiOutlineChatAlt2 className="inline-block h-6 w-6" />
+        break
+      }
     }
     return result
   }, [])
 
-  const handleNavigate = (id: string) => {
-    setSelected(id)
-    navigate('/forums/' + id)
-  }
   return (
     <div className="flex-1 bg-[#fff] border-r border-slate-200 max-h-[100vh] fixed w-full">
       <div>
@@ -86,9 +87,6 @@ const SidebarEmployer: FC<Props> = (props): JSX.Element => {
           ))}
         </ul>
       </div>
-      {/* <div>
-        <p>Design by </p>
-      </div> */}
     </div>
   )
 }

@@ -4,6 +4,8 @@ export const ROUTER_USER = Object.freeze({
     FORGOT_PASSWORD: 'auth/forgot-password',
     HOME: '/',
     BOOKMARK: '/list-bookmark',
+    MESSAGE: '/message',
+    MESSAGE_GROUP: '/message/:id',
     HISTORY: '/history',
     JOB_DETAIL: 'jobs/:id',
     MANAGEMENT_CV: '/manager-cv',
@@ -29,7 +31,9 @@ export const ROUTER_EMPLOYER = Object.freeze({
     BUSINESS_LICENSE: 'business-license',
     RECRUITMENT_MANAGER: '/employer/recruitment-management',
     DETAIL_JOB: '/employer/recruitment-management/:id',
-    CV_MANAGER: '/employer/cv-management'
+    CV_MANAGER: '/employer/cv-management',
+    CHAT_SERVICE: '/employer/chat-service',
+    CHAT_SERVICE_ROOM: ':id'
 });
 
 export const urlsNoTokenRequired = ["/", "/company"]
@@ -84,6 +88,13 @@ export const DATA_SIDEBAR = [
         name: 'CV management',
         pathName: "/employer/cv-management",
         icon: "cv",
+        children: [],
+    },
+    {
+        id: 4,
+        name: 'Chat service',
+        pathName: "/employer/chat-service",
+        icon: "chat",
         children: [],
     },
 ];

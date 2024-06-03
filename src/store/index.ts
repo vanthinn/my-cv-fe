@@ -11,6 +11,8 @@ import { notifyModel as notify, INotifyModel } from "./models/notify";
 import { userModel as user, IUserModel } from "./models/user";
 import { jobModel as job, IJobModel } from "./models/job";
 import { bookmarkModel as bookmark, IBookmarkModel } from "./models/bookmark";
+import { conversationModel as conversation, IConversationModel } from "./models/conversation";
+
 
 export interface IStoreModel {
     resume: IResumeModel
@@ -20,6 +22,7 @@ export interface IStoreModel {
     user: IUserModel
     job: IJobModel
     bookmark: IBookmarkModel
+    conversation: IConversationModel
 }
 
 const storeModel: IStoreModel = {
@@ -30,6 +33,7 @@ const storeModel: IStoreModel = {
     user,
     job,
     bookmark,
+    conversation
 }
 
 export const { useStoreActions, useStoreState, useStoreDispatch, useStore } =
@@ -65,6 +69,10 @@ export const jobActionSelector = (state: IActionMapper) => state.job;
 //bookmark
 export const bookmarkStateSelector = (state: IStateMapper) => state.bookmark;
 export const bookmarkActionSelector = (state: IActionMapper) => state.bookmark;
+
+//conversation
+export const conversationStateSelector = (state: IStateMapper) => state.conversation;
+export const conversationActionSelector = (state: IActionMapper) => state.conversation;
 
 const store = createStore(storeModel, {
     name: "store",
