@@ -11,7 +11,6 @@ import { AiFillCaretDown } from 'react-icons/ai'
 import { Tooltip } from '@mui/material'
 import { useStoreActions, useStoreState } from 'easy-peasy'
 import ContentChat from './components/ContentChat'
-import DetailConversation from './components/DetailConversation'
 import notFoundSearch from '../../assets/images/notFoundSearch.jpg'
 import ViewImagePaste from './components/ViewImagePaste'
 import {
@@ -25,6 +24,7 @@ import { IMessage } from '../../types/IConversation'
 import { base64StringToBlob } from '../../utils/functions/partBlobToFile'
 import { HiOutlineInformationCircle } from 'react-icons/hi'
 import InfoUser from './components/InfoUser/InfoUser'
+import avatart_default from '../../assets/images/user-default.jpg'
 
 interface Props {}
 
@@ -102,7 +102,7 @@ const Message: FC<Props> = (): JSX.Element => {
       const heightTop = searchRef.current.scrollHeight
       const heightSeeding = seendingRef.current.scrollHeight
       const windowHeight = window.innerHeight
-      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 122 : 96
+      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 128 : 196
       const totalHeight = windowHeight - heightHeader - heightTop - heightSeeding
       setHeightContent(totalHeight)
       contentRef.current.scrollTo(0, 0)
@@ -230,15 +230,15 @@ const Message: FC<Props> = (): JSX.Element => {
               <span>There is no chat selected yet</span>
             </div>
           ) : (
-            <div className="flex flex-col w-full ">
+            <div className="flex flex-col w-full  ">
               <div
                 className="py-2 px-4 border-b border-gray-300 shadow flex"
                 ref={searchRef}>
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
                     <img
-                      className="h-10 w-10 rounded-full border border-slate-200 "
-                      src={currentConversation?.avatarUrl}
+                      className="h-10 w-10 rounded-full border border-slate-200 object-cover "
+                      src={currentConversation?.avatarUrl || avatart_default}
                       alt=""
                     />
                     <span>{currentConversation?.displayName}</span>
@@ -255,6 +255,7 @@ const Message: FC<Props> = (): JSX.Element => {
               <div
                 id="scrollableDivContentChat"
                 ref={contentRef}
+                className="shadow-sm"
                 style={{
                   maxHeight: heightContent !== undefined ? heightContent : '0',
                   overflow: 'auto',

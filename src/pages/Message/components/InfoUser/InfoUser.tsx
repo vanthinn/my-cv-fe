@@ -10,6 +10,7 @@ import {
   HiOutlinePhone,
   HiOutlineUser,
 } from 'react-icons/hi'
+import avatar_default from '../../../../assets/images/user-default.jpg'
 
 export default function InfoUser({ open, toggleDrawer }: any) {
   const { currentConversation } = useStoreState(conversationStateSelector)
@@ -27,7 +28,7 @@ export default function InfoUser({ open, toggleDrawer }: any) {
         style={{ maxHeight: 'calc(100vh - 62px)' }}>
         <img
           className="h-16 w-16 rounded-full border border-gray-500 object-cover flex-shrink-0"
-          src={currentConversation?.avatarUrl}
+          src={currentConversation?.avatarUrl || avatar_default}
           alt={currentConversation?.displayName}
         />
 

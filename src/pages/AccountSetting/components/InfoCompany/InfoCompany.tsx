@@ -89,7 +89,9 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
 
               <Button
                 className="flex items-center"
-                onClick={() => setIsOpenModalAddEditCompany(true)}>
+                onClick={() => {
+                  setIsOpenModalAddEditCompany(true)
+                }}>
                 <HiOutlinePlus className="mr-2" /> Create new company
               </Button>
             </div>
@@ -179,13 +181,18 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                 <span>{company.scale}</span>
               </div>
 
-              <div className="grid grid-cols-2 justify-start">
+              <div className="grid grid-cols-2 justify-start ">
                 <label
                   className="font-semibold"
                   htmlFor="">
                   Website:
                 </label>
-                <span>{company.website ? company.website : '--'}</span>
+                <a
+                  target="_blank"
+                  href={company.website ? company.website : ''}
+                  className="break-words text-blue-600">
+                  {company.website ? company.website : '--'}
+                </a>
               </div>
               <div className="grid grid-cols-2 justify-start">
                 <label
@@ -219,7 +226,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                   Description:
                 </label>
                 <div
-                  className=" "
+                  className=" col-span-3"
                   dangerouslySetInnerHTML={{
                     __html: company?.description || '',
                   }}
@@ -229,7 +236,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
 
             <p
               onClick={() => setIsOpenModalAddEditCompany(true)}
-              className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-slate-200 rounded-md cursor-pointer">
+              className="absolute top-2 right-2 flex items-center gap-2 px-3 py-1.5 bg-slate-200 rounded-md cursor-pointer">
               <HiOutlinePencilAlt /> Edit company
             </p>
           </div>

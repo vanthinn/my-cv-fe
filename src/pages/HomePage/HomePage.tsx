@@ -51,7 +51,7 @@ const HomePage: FC<Props> = (props): JSX.Element => {
   }
 
   const handleSearch = () => {
-    addQueryParam(inputSearch, city)
+    addQueryParam(inputSearch, city, experience)
     getAllJobHome()
   }
 
@@ -78,6 +78,7 @@ const HomePage: FC<Props> = (props): JSX.Element => {
       take: paginationModel.pageSize,
       search: inputSearch,
       city: city,
+      experience: experience,
       userId: currentUserSuccess ? currentUserSuccess.id : undefined,
     })
     if (res) {
@@ -103,16 +104,17 @@ const HomePage: FC<Props> = (props): JSX.Element => {
     }
   }
 
-  const addQueryParam = (valueSearch: string, city: string): void => {
+  const addQueryParam = (valueSearch: string, city: string, experience: string): void => {
     const queryParams = new URLSearchParams()
     queryParams.set('search', valueSearch.trim())
     queryParams.set('city', city.trim())
+    queryParams.set('experience', experience.trim())
     const newURL = `/?${queryParams.toString()}`
     window.history.pushState({}, '', newURL)
   }
 
   useEffect(() => {
-    addQueryParam(inputSearch, city)
+    addQueryParam(inputSearch, city, experience)
     getAllJobHome()
   }, [paginationModel])
 
@@ -124,7 +126,7 @@ const HomePage: FC<Props> = (props): JSX.Element => {
           onChange={handleChangeSearch}
           value={inputSearch}
           placeholder="Search for jobs"
-          width="300px"
+          width="400px"
         />
 
         <AutocompleteCustom

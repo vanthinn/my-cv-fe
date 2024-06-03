@@ -1,35 +1,43 @@
-import { ICompany } from "../types/ICompany";
-import BaseURL from "../utils/BaseURL";
+import { ICompany } from '../types/ICompany'
+import BaseURL from '../utils/BaseURL'
 
 const getAllCompany = (params: any) => {
-    return BaseURL({
-        url: `/company`,
-        method: "GET",
-        params,
-    });
-};
+  return BaseURL({
+    url: `/company`,
+    method: 'GET',
+    params,
+  })
+}
 
 const getCompanyById = (id: string) => {
-    return BaseURL({
-        url: `/company/${id}`,
-        method: "GET",
-    });
-};
+  return BaseURL({
+    url: `/company/${id}`,
+    method: 'GET',
+  })
+}
 
 const updateCompany = (data: ICompany) => {
-    return BaseURL({
-        url: `/company/${data.id}`,
-        method: "PUT",
-        data,
-    });
+  return BaseURL({
+    url: `/company/${data.id}`,
+    method: 'PUT',
+    data,
+  })
+}
+
+const createCompany = (data: Omit<ICompany, 'id'>) => {
+  return BaseURL({
+    url: `/company/`,
+    method: 'POST',
+    data,
+  })
 }
 
 const chooseCompany = (data: { id: string }) => {
-    return BaseURL({
-        url: `/users/company`,
-        method: "PATCH",
-        data,
-    });
+  return BaseURL({
+    url: `/users/company`,
+    method: 'PATCH',
+    data,
+  })
 }
 
-export { getAllCompany, getCompanyById, updateCompany, chooseCompany }
+export { getAllCompany, getCompanyById, updateCompany, chooseCompany, createCompany }

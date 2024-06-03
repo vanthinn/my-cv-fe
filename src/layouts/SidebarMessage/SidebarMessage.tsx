@@ -135,24 +135,19 @@ const SidebarMessage: FC<Props> = (): JSX.Element => {
             endMessage={
               <div>
                 {paginationModel && !loading && listConversation.length === 0 && (
-                  <div className="flex-1 flex flex-col items-center justify-center">
-                    <div className="h-40 w-40">
+                  <div className="flex-1 flex flex-col items-center justify-center px-6">
+                    <div className="h-32 w-32">
                       <img
                         className="h-full w-full"
                         src={notFoundSearch}
                         alt="not found search"
                       />
                     </div>
-                    <span className="font-medium">
+                    <span className="font-medium text-sm">
                       We're sorry. We were not able to find a match
                     </span>
                   </div>
                 )}
-                {/* {data.length === totalRowCount && data.length > 0 && paginationModel && (
-              <p style={{ textAlign: 'center', marginTop: 12 }}>
-                <b>Đúng! Bạn đã nhìn thấy tất cả kết quả tìm kiếm</b>
-              </p>
-            )} */}
               </div>
             }>
             <ul className="flex flex-col mt-2 gap-1 px-2 pt-1 ">
@@ -213,7 +208,9 @@ const SidebarMessage: FC<Props> = (): JSX.Element => {
                               ? 'Bạn đã gửi một ảnh'
                               : `${
                                   item.lastMessage.author.displayName ||
-                                  item.lastMessage.author.fullName
+                                  item.lastMessage.author.firstName +
+                                    ' ' +
+                                    item.lastMessage.author.lastName
                                 } đã gửi mọt ảnh`)}
                         </span>
                         <span className=" text-xs">

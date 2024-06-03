@@ -44,10 +44,15 @@ const ModalAddEditCompany: FC<Props> = ({
   company,
 }: Props): JSX.Element => {
   const { postImage } = useStoreActions(userActionSelector)
-  const { messageErrorCompany, isUpdateCompanySuccess } =
+  const { messageErrorCompany, isUpdateCompanySuccess, isCreateCompanySuccess } =
     useStoreState(companyStateSelector)
-  const { updateCompany, setIsUpdateCompanySuccess, setCompany } =
-    useStoreActions(companyActionSelector)
+  const {
+    updateCompany,
+    setIsUpdateCompanySuccess,
+    setCompany,
+    createCompany,
+    setIsCreateCompanySuccess,
+  } = useStoreActions(companyActionSelector)
   const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const ImageRef: any = useRef()
   const [Images, setImages] = useState<Image[]>([])
@@ -119,15 +124,27 @@ const ModalAddEditCompany: FC<Props> = ({
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
     setIsLoading(true)
-    const res = await updateCompany({ ...data, description: dataHTML })
-    if (res) {
-      setNotifySetting({
-        show: true,
-        status: 'success',
-        message: 'Edit company successfully',
-      })
+    if (company) {
+      const res = await updateCompany({ ...data, description: dataHTML })
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Edit company successfully',
+        })
+      }
+      setCompany(res)
+    } else {
+      const res = await createCompany({ ...data, description: dataHTML })
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Create company successfully',
+        })
+      }
+      setCompany(res)
     }
-    setCompany(res)
     setOpen(false)
     setIsLoading(false)
   }
@@ -142,6 +159,17 @@ const ModalAddEditCompany: FC<Props> = ({
       setIsUpdateCompanySuccess(true)
     }
   }, [isUpdateCompanySuccess])
+
+  useEffect(() => {
+    if (!isCreateCompanySuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorCompany,
+      })
+      setIsCreateCompanySuccess(true)
+    }
+  }, [isCreateCompanySuccess])
 
   // const valueAvatarUrl = watch('logo')
 
@@ -232,7 +260,7 @@ const ModalAddEditCompany: FC<Props> = ({
                                 fieldState: { error },
                               }) => (
                                 <TextFieldV2
-                                  disabled
+                                  disabled={!!company}
                                   error={error}
                                   onChange={onChange}
                                   value={value}
@@ -296,7 +324,7 @@ const ModalAddEditCompany: FC<Props> = ({
                               )}
                             />
                           </div>
-                          <div className="col-span-2 grid gird-cols-2 gap-4 ">
+                          <div className="col-span-2 grid grid-cols-2 gap-4 ">
                             <div className="col-span-2 flex flex-col ">
                               <label
                                 htmlFor=""

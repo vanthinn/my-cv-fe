@@ -7,6 +7,7 @@ import { IMessage } from '../../../../types/IConversation'
 import { userStateSelector } from '../../../../store'
 import { pageMode } from '../../../../types/ICommon'
 import { formatDateLocalV2 } from '../../../../utils/functions/formatDay'
+import avatar_default from '../../../../assets/images/user-default.jpg'
 
 interface Props {
   data: IMessage[]
@@ -119,20 +120,6 @@ const ContentChat: FC<Props> = ({
                 </p>
               </div>
             )}
-            {/* {paginationModel && !loading && data.length === 0 && (
-                        <div className="flex-1 flex flex-col items-center justify-center">
-                          <div className="h-40 w-40">
-                            <img
-                              className="h-full w-full"
-                              src={notFoundSearch}
-                              alt="not found search"
-                            />
-                          </div>
-                          <span className="font-medium">
-                            We're sorry. We were not able to find a match
-                          </span>
-                        </div>
-                      )} */}
             {data.length === totalRowCount && data.length > 0 && paginationModel && (
               <p style={{ textAlign: 'center', marginTop: 12 }}>
                 <b>You have seen all the messages</b>
@@ -163,7 +150,7 @@ const ContentChat: FC<Props> = ({
                     <div className="h-8 w-8 overflow-hidden">
                       <img
                         className="h-full w-full rounded-3xl border border-gray-200"
-                        src={item.author.avatarUrl}
+                        src={item.author.avatarUrl || avatar_default}
                         alt={item.author.firstName}
                       />
                     </div>
@@ -171,7 +158,7 @@ const ContentChat: FC<Props> = ({
                 )}
                 <div className="flex flex-col gap-1 text-xs">
                   {item.author.id !== currentUserSuccess?.id && (
-                    <span>{item.author.firstName + item.author.lastName}</span>
+                    <span>{item.author.firstName + ' ' + item.author.lastName}</span>
                   )}
                   <Tooltip title={formatDateLocalV2(item.createdAt)}>
                     <div className="flex max-w-[700px] ">
