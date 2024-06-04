@@ -61,7 +61,23 @@ const PreviewResume: FC<Props> = (props): JSX.Element => {
   }
 
   const handleCapture = async () => {
-    const input = document.getElementById('cv-template')
+    let input
+    switch (resumeData.template) {
+      case 'basic': {
+        input = document.getElementById('cv-template')
+        break
+      }
+
+      case 'economic': {
+        input = document.getElementById('economic-template')
+        break
+      }
+
+      case 'classic': {
+        input = document.getElementById('classic-template')
+        break
+      }
+    }
     if (!input) {
       console.error('Could not find the CV template element.')
       return
@@ -83,7 +99,23 @@ const PreviewResume: FC<Props> = (props): JSX.Element => {
   }
 
   const generatePdf = async () => {
-    const input = document.getElementById('cv-template')
+    let input
+    switch (resumeData.template) {
+      case 'basic': {
+        input = document.getElementById('cv-template')
+        break
+      }
+
+      case 'economic': {
+        input = document.getElementById('economic-template')
+        break
+      }
+
+      case 'classic': {
+        input = document.getElementById('classic-template')
+        break
+      }
+    }
     if (!input) {
       console.error('Could not find the CV template element.')
       return

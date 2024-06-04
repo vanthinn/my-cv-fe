@@ -119,7 +119,7 @@ const CVManagement: FC<Props> = (props): JSX.Element => {
                   {editName.id === item.id && editName.isEditName ? (
                     <>
                       <input
-                        className="outline-none px-2 py-0.5"
+                        className="outline-none px-2 py-0.5 max-w-[80%]"
                         type="text"
                         value={inputName}
                         onChange={(e) => setInputName(e.target.value)}
@@ -154,7 +154,7 @@ const CVManagement: FC<Props> = (props): JSX.Element => {
                   )}
                 </div>
 
-                <div className="absolute top-4 right-4">
+                <div className="absolute top-5 right-5">
                   {item.state ? (
                     <Tooltip title="Main cv">
                       <div>

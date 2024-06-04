@@ -102,7 +102,7 @@ const Message: FC<Props> = (): JSX.Element => {
       const heightTop = searchRef.current.scrollHeight
       const heightSeeding = seendingRef.current.scrollHeight
       const windowHeight = window.innerHeight
-      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 128 : 162
+      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 128 : 164
       const totalHeight = windowHeight - heightHeader - heightTop - heightSeeding
       setHeightContent(totalHeight)
       contentRef.current.scrollTo(0, 0)
@@ -151,6 +151,8 @@ const Message: FC<Props> = (): JSX.Element => {
       }
     }
   }
+
+  console.log(id)
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
@@ -222,123 +224,124 @@ const Message: FC<Props> = (): JSX.Element => {
           <span>We're sorry. We were not able to find a match</span>
         </div>
       )}
+      {id === undefined && (
+        <div className="flex h-full bg-white">
+          <div className="m-auto text-xl font-bold flex flex-col items-center gap-3">
+            <IoChatbubblesOutline className="h-16 w-16 text-[#0001CB]" />
+            <span>There is no chat selected yet</span>
+          </div>
+        </div>
+      )}
       {isGetConverSationByIdSuccess && (
         <div className="flex h-full bg-white">
-          {id === undefined ? (
-            <div className="m-auto text-xl font-bold flex flex-col items-center gap-3">
-              <IoChatbubblesOutline className="h-16 w-16 text-[#0001CB]" />
-              <span>There is no chat selected yet</span>
-            </div>
-          ) : (
-            <div className="flex flex-col w-full  ">
-              <div
-                className="py-2 px-4 border-b border-gray-300 shadow flex"
-                ref={searchRef}>
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-2">
-                    <img
-                      className="h-10 w-10 rounded-full border border-slate-200 object-cover "
-                      src={currentConversation?.avatarUrl || avatart_default}
-                      alt=""
-                    />
-                    <span>{currentConversation?.displayName}</span>
-                  </div>
-
-                  <Tooltip title="Info">
-                    <div onClick={toggleDrawer(true)}>
-                      <HiOutlineInformationCircle className="text-xl hover:text-blue-500 cursor-pointer" />
-                    </div>
-                  </Tooltip>
+          <div className="flex flex-col w-full  ">
+            <div
+              className="py-2 px-4 border-b border-gray-300 shadow flex"
+              ref={searchRef}>
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2">
+                  <img
+                    className="h-10 w-10 rounded-full border border-slate-200 object-cover "
+                    src={currentConversation?.avatarUrl || avatart_default}
+                    alt=""
+                  />
+                  <span>{currentConversation?.displayName}</span>
                 </div>
-              </div>
 
-              <div
-                id="scrollableDivContentChat"
-                ref={contentRef}
-                className="shadow-sm"
-                style={{
-                  maxHeight: heightContent !== undefined ? heightContent : '0',
-                  overflow: 'auto',
-                  flexDirection: 'column-reverse',
-                }}>
-                <ContentChat
-                  checkNext={checkNext}
-                  data={currentConverSationMessage}
-                  heightContent={heightContent}
-                  loading={loading}
-                  paginationModel={paginationModel}
-                  setPaginationModel={setPaginationModel}
-                  totalRowCount={totalRowMessages}
-                  loadingImage={loadingImage}
-                />
+                <Tooltip title="Info">
+                  <div onClick={toggleDrawer(true)}>
+                    <HiOutlineInformationCircle className="text-xl hover:text-blue-500 cursor-pointer" />
+                  </div>
+                </Tooltip>
               </div>
+            </div>
 
-              <div
-                ref={seendingRef}
-                className="mt-auto flex items-center px-4 py-3 gap-4  shadow-stone-400">
-                <Tooltip title="Thêm ....">
-                  <div>
-                    <IoAddCircleSharp className="h-7 w-7 text-[#0001CB] cursor-pointer" />
-                  </div>
-                </Tooltip>
-                <Tooltip title="Thêm ảnh">
-                  <div>
-                    <label htmlFor="AddImageMessage">
-                      <IoImages className="h-6 w-6 text-[#0001CB] cursor-pointer" />
-                    </label>
-                    <input
-                      id="AddImageMessage"
-                      type="file"
-                      accept="image/jpeg, image/png, image/gif"
-                      className="hidden"
-                      multiple={false}
-                      onChange={(e) => {
-                        const files = e.target.files
-                        if (files && files.length > 0 && files[0] !== null) {
-                          const selectedFile = files[0]
-                          handleAddImageMessage(selectedFile)
-                        }
-                      }}
-                    />
-                  </div>
-                </Tooltip>
-                <Tooltip title="Thêm chi chưa biết">
-                  <div className="relative">
-                    <IoPawSharp className="h-6 w-6 text-[#0001CB] cursor-pointer" />
-                  </div>
-                </Tooltip>
-                <div
-                  onPaste={handlePaste}
-                  className="relative flex-1 w-full">
+            <div
+              id="scrollableDivContentChat"
+              ref={contentRef}
+              className="shadow-sm"
+              style={{
+                maxHeight: heightContent !== undefined ? heightContent : '0',
+                overflow: 'auto',
+                flexDirection: 'column-reverse',
+              }}>
+              <ContentChat
+                checkNext={checkNext}
+                data={currentConverSationMessage}
+                heightContent={heightContent}
+                loading={loading}
+                paginationModel={paginationModel}
+                setPaginationModel={setPaginationModel}
+                totalRowCount={totalRowMessages}
+                loadingImage={loadingImage}
+              />
+            </div>
+
+            <div
+              ref={seendingRef}
+              className="mt-auto flex items-center px-4 py-3 gap-4  shadow-stone-400">
+              <Tooltip title="Thêm ....">
+                <div>
+                  <IoAddCircleSharp className="h-7 w-7 text-[#0001CB] cursor-pointer" />
+                </div>
+              </Tooltip>
+              <Tooltip title="Thêm ảnh">
+                <div>
+                  <label htmlFor="AddImageMessage">
+                    <IoImages className="h-6 w-6 text-[#0001CB] cursor-pointer" />
+                  </label>
                   <input
-                    type="text"
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="w-full outline-none border border-gray-300 px-3 py-1.5 rounded-3xl"
-                    placeholder="Aa"
+                    id="AddImageMessage"
+                    type="file"
+                    accept="image/jpeg, image/png, image/gif"
+                    className="hidden"
+                    multiple={false}
+                    onChange={(e) => {
+                      const files = e.target.files
+                      if (files && files.length > 0 && files[0] !== null) {
+                        const selectedFile = files[0]
+                        handleAddImageMessage(selectedFile)
+                      }
+                    }}
                   />
-                  <RiSendPlaneFill
-                    onClick={() => handleAddMessage()}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-[#0001CB] cursor-pointer"
-                  />
-
-                  {imageFile && (
-                    <div className="absolute top-[-224px] right-1/2 translate-x-1/2 h-[220px] w-[220px] bg-slate-100 rounded-md p-2">
-                      <ViewImagePaste
-                        imageFile={imageFile}
-                        setImageFile={setImageFile}
-                      />
-                    </div>
-                  )}
-                  {imageFile && (
-                    <AiFillCaretDown className="absolute top-[-12px] right-1/2 translate-x-1/2 h-7 w-7 text-gray-200" />
-                  )}
                 </div>
+              </Tooltip>
+              <Tooltip title="Thêm chi chưa biết">
+                <div className="relative">
+                  <IoPawSharp className="h-6 w-6 text-[#0001CB] cursor-pointer" />
+                </div>
+              </Tooltip>
+              <div
+                onPaste={handlePaste}
+                className="relative flex-1 w-full">
+                <input
+                  type="text"
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="w-full outline-none border border-gray-300 px-3 py-1.5 rounded-3xl"
+                  placeholder="Aa"
+                />
+                <RiSendPlaneFill
+                  onClick={() => handleAddMessage()}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-6 text-[#0001CB] cursor-pointer"
+                />
+
+                {imageFile && (
+                  <div className="absolute top-[-224px] right-1/2 translate-x-1/2 h-[220px] w-[220px] bg-slate-100 rounded-md p-2">
+                    <ViewImagePaste
+                      imageFile={imageFile}
+                      setImageFile={setImageFile}
+                    />
+                  </div>
+                )}
+                {imageFile && (
+                  <AiFillCaretDown className="absolute top-[-12px] right-1/2 translate-x-1/2 h-7 w-7 text-gray-200" />
+                )}
               </div>
-              {/* <DetailConversation /> */}
             </div>
-          )}
+            {/* <DetailConversation /> */}
+          </div>
         </div>
       )}
 

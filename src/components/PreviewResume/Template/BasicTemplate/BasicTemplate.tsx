@@ -100,32 +100,6 @@ const BasicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
                 </div>
               </div>
 
-              {/* <div
-                id="Education"
-                className="pl-6 pt-24 flex-1">
-                <h1 className="uppercase pb-2 border-b-2 border-gbg-yellow-400 text-lg font-bold">
-                  Education
-                </h1>
-                <ul className="pt-4 ">
-                  <li>
-                    <h1 className="uppercase font-semibold">
-                      {resumeData.education.fieldOfStudy}
-                    </h1>
-                    <h2 className="text-sm"> {resumeData.education.schoolName}</h2>
-                    <div className="flex items-center">
-                      <h2 className="text-sm">
-                        {formatToMonthYear(resumeData.education.startDate)}
-                      </h2>
-                      <span className="mx-2"> - </span>
-                      <h2 className="text-sm">
-                        {formatToMonthYear(resumeData.education.endDate)}
-                      </h2>
-                    </div>
-                    <span className="text-sm">GPA: {resumeData.education.GPA}</span>
-                  </li>
-                </ul>
-              </div> */}
-
               {resumeData.interests && resumeData.interests.length > 0 && (
                 <div
                   id="Hobbies"

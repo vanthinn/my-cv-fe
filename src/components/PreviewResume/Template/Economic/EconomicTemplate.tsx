@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import { formatDayVN, formatToMonthYear } from '../../../../utils/functions/formatDay'
+import { fonts } from '../../../../common/constants'
 
 interface Props {
   resumeData: any
@@ -8,9 +9,10 @@ interface Props {
 const EconomicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
   return (
     <div
-      id="economic-cv"
-      className="flex justify-center content-center">
-      <div className="border border-slate-300 rounded-sm shadow-lg py-10 px-10">
+      id="economic-template"
+      style={{ fontFamily: resumeData.fontStyle || fonts[0].value }}
+      className="flex flex-1 w-full">
+      <div className="border border-slate-300 rounded-sm shadow-lg py-10 px-10 w-full">
         <header>
           <ul className="flex flex-wrap justify-end gap-2">
             <li>
