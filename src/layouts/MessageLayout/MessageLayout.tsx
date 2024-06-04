@@ -11,7 +11,7 @@ const MessageLayout: FC<Props> = ({ children }): JSX.Element => {
     <div className=" min-h-screen wrapper overflow-x-hidden flex flex-col">
       <Header />
       <div className="mt-24 xl:mx-60 lg:mx-16 sx:mx-8 xs:mx-auto flex flex-col flex-1 ">
-        <div className="grid grid-cols-10 flex-1 h-full border-t border-b rounded-xl overflow-hidden border-r border-gray-300 my-12 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] ">
+        <div className="grid grid-cols-10 flex-1 h-full border-t border-b rounded-xl overflow-hidden border-r border-gray-300 my-8 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px] ">
           <nav className="col-span-3 flex-1 border-l border-r border-gray-300 h-full">
             <SidebarMessage />
           </nav>

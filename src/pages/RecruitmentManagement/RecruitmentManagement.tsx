@@ -47,7 +47,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     {
-      field: 'name',
+      field: 'createdAt',
       sort: 'asc',
     },
   ])
@@ -60,6 +60,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       skip: paginationModel.page * paginationModel.pageSize,
       take: paginationModel.pageSize,
       search: inputSearch,
+      order: `${sortModel[0]?.field}:${sortModel[0]?.sort}`,
       companyId: company?.id,
     })
     if (res) {
@@ -151,7 +152,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       disableColumnMenu: true,
     },
     {
-      field: 'title',
+      field: 'jobTitle',
       headerName: 'Title',
       flex: 1.6,
       minWidth: 150,
@@ -174,6 +175,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       align: 'left',
       headerAlign: 'left',
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <Tooltip title={params.row.salary}>
           <p className={`text-black line-clamp-1`}>{params.row.salary}</p>
@@ -189,6 +191,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       align: 'left',
       headerAlign: 'left',
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, number>) => (
         <Tooltip title={params.row.experience}>
           <p className={`text-black line-clamp-1`}>{params.row.experience}</p>
@@ -222,7 +225,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       headerAlign: 'left',
       disableColumnMenu: true,
       hideable: false,
-      sortable: false,
+      sortable: true,
       renderCell: (params: GridRenderCellParams<any, number>) => (
         <Tooltip title={formatDayVN(params.row.createdAt)}>
           <p className={`text-black line-clamp-1`}>{formatDayVN(params.row.createdAt)}</p>

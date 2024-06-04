@@ -102,7 +102,7 @@ const Message: FC<Props> = (): JSX.Element => {
       const heightTop = searchRef.current.scrollHeight
       const heightSeeding = seendingRef.current.scrollHeight
       const windowHeight = window.innerHeight
-      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 128 : 196
+      const heightHeader = currentUserSuccess?.role?.name === 'EMPLOYER' ? 128 : 162
       const totalHeight = windowHeight - heightHeader - heightTop - heightSeeding
       setHeightContent(totalHeight)
       contentRef.current.scrollTo(0, 0)

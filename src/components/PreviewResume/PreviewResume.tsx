@@ -127,8 +127,8 @@ const PreviewResume: FC<Props> = (props): JSX.Element => {
   }, [id, resumeData.color, resumeData.fontStyle])
 
   return (
-    <div className="p-8 mt-8 grid grid-cols-10 gap-6 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] ">
-      <div className="col-span-7 bg-slate-200 flex-1 h-full ">
+    <div className="p-4 mt-8 grid grid-cols-10 gap-6 shadow-[rgba(50,_50,_105,_0.15)_0px_2px_5px_0px,_rgba(0,_0,_0,_0.05)_0px_1px_1px_0px] ">
+      <div className="col-span-7  flex-1 h-full ">
         <Template />
       </div>
 

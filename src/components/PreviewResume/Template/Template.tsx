@@ -3,6 +3,7 @@ import { FC } from 'react'
 import { resumeStateSelector } from '../../../store'
 import BasicTemplate from './BasicTemplate'
 import EconomicTemplate from './Economic'
+import ClassicTemplate from './ClassicTemplate/ClassicTemplate'
 
 interface Props {}
 
@@ -19,6 +20,9 @@ const Template: FC<Props> = (): JSX.Element => {
       break
     case 'basic':
       templateUI = <BasicTemplate resumeData={resumeData} />
+      break
+    case 'classic':
+      templateUI = <ClassicTemplate resumeData={resumeData} />
       break
     default:
       templateUI = <BasicTemplate resumeData={resumeData} />

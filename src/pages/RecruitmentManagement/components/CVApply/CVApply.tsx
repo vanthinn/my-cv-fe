@@ -118,6 +118,7 @@ const CVApply: FC<Props> = (props): JSX.Element => {
         skip: paginationModel.page * paginationModel.pageSize,
         take: paginationModel.pageSize,
         search: inputSearch,
+        order: `${sortModel[0]?.field}:${sortModel[0]?.sort}`,
         status: 'PENDING',
       },
     })
@@ -224,6 +225,7 @@ const CVApply: FC<Props> = (props): JSX.Element => {
       headerAlign: 'left',
       disableColumnMenu: true,
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <li
           onClick={() => {

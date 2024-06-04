@@ -42,6 +42,7 @@ const TabCVApprove: FC<Props> = (props): JSX.Element => {
         skip: paginationModel.page * paginationModel.pageSize,
         take: paginationModel.pageSize,
         search: inputSearch,
+        order: `${sortModel[0]?.field}:${sortModel[0]?.sort}`,
         status: 'APPROVED',
       },
     })
@@ -114,7 +115,7 @@ const TabCVApprove: FC<Props> = (props): JSX.Element => {
     },
     {
       field: 'email',
-      headerName: 'Candidate Mail',
+      headerName: 'Email',
       flex: 1.5,
       minWidth: 150,
       editable: false,

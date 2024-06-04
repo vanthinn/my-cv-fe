@@ -158,6 +158,7 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       take: paginationModel.pageSize,
       search: inputSearch,
       companyId: company?.id,
+      order: `${sortModel[0]?.field}:${sortModel[0]?.sort}`,
       status: 'PENDING',
     })
     if (res) {
@@ -231,13 +232,14 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
     },
     {
       field: 'email',
-      headerName: 'Candidate Mail',
+      headerName: 'Email',
       flex: 1.5,
       minWidth: 150,
       editable: false,
       align: 'left',
       headerAlign: 'left',
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <Tooltip title={params.row.email}>
           <p className={`text-black line-clamp-1`}>{params.row.email}</p>
@@ -272,6 +274,7 @@ const TabAllCV: FC<Props> = (props): JSX.Element => {
       headerAlign: 'left',
       disableColumnMenu: true,
       hideable: false,
+      sortable: false,
       renderCell: (params: GridRenderCellParams<any, string>) => (
         <li
           onClick={() => {
