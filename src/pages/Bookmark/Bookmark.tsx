@@ -45,7 +45,8 @@ const Bookmark: FC<Props> = (props): JSX.Element => {
           data.map((item, index) => (
             <div
               key={index}
-              className="border px-4 py-2 rounded-lg">
+              onClick={() => navigate('/jobs/' + item.job.id)}
+              className="border px-4 py-2 rounded-lg cursor-pointer hover:shadow-lg transition-all duration-200">
               <div className="flex justify-between items-center">
                 <h4 className="text-xl font-medium flex-1 line-clamp-1">
                   {item?.job?.jobTitle}
@@ -55,9 +56,7 @@ const Bookmark: FC<Props> = (props): JSX.Element => {
                   className="text-2xl mt-2 hover:text-red-500 cursor-pointer"
                 />
               </div>
-              <div
-                onClick={() => navigate('/jobs/' + item.job.id)}
-                className="flex mt-2 gap-2 flex-wrap">
+              <div className="flex mt-2 gap-2 flex-wrap">
                 <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
                   {item.job.salary}
                 </li>
@@ -73,12 +72,18 @@ const Bookmark: FC<Props> = (props): JSX.Element => {
                     {item.job.education}
                   </li>
                 )}
-                <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
-                  <span className="font-semibold text-slate-200">
-                    {daysUntil(item.job.deadline)}
-                  </span>{' '}
-                  days left to apply
-                </li>
+                {Number(daysUntil(item.job.deadline)) > 0 ? (
+                  <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
+                    <span className="font-semibold text-slate-200">
+                      {daysUntil(item.job.deadline)}
+                    </span>{' '}
+                    days left to apply
+                  </li>
+                ) : (
+                  <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
+                    Submission deadline
+                  </li>
+                )}
               </div>
 
               <div

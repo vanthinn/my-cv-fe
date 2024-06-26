@@ -33,6 +33,7 @@ const schema = yup.object().shape({
   logoUrl: yup.string().required('Logo is required'),
   phoneNumber: yup.string().required('Phone number is required'),
   fieldOfActivity: yup.string().required('Field of activity is required'),
+
   scale: yup.string().required('Scale is required'),
   email: yup.string().required('Email is required'),
   address: yup.string().required('Address is required'),
@@ -43,6 +44,8 @@ const ModalAddEditCompany: FC<Props> = ({
   setOpen,
   company,
 }: Props): JSX.Element => {
+  console.log(company)
+
   const { postImage } = useStoreActions(userActionSelector)
   const { messageErrorCompany, isUpdateCompanySuccess, isCreateCompanySuccess } =
     useStoreState(companyStateSelector)
@@ -233,7 +236,9 @@ const ModalAddEditCompany: FC<Props> = ({
                 leaveTo="opacity-0 scale-95">
                 <Dialog.Panel className="relative w-full max-w-[700px] max-h-[600px]  overflow-y-auto overflow-hidden flex flex-col transform  rounded-xl bg-white p-4 text-left align-middle shadow-xl transition-all">
                   <div className="flex flex-col gap-2 relative">
-                    <h2 className="m-auto text-xl font-semibold">Add new company</h2>
+                    <h2 className="m-auto text-xl font-semibold">
+                      {company ? 'Edit' : 'Add new'} company
+                    </h2>
                     <span
                       className="absolute top-0 right-0 text-xl text-gray-500 cursor-pointer"
                       onClick={() => setOpen(false)}>

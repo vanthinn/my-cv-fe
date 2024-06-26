@@ -62,6 +62,13 @@ const schema = yup.object().shape({
                 return startDate && value ? new Date(value) > new Date(startDate) : true
               },
             )
+            .test(
+              'is-less-than-today',
+              'End date must be earlier than today',
+              function (value) {
+                return value ? new Date(value) < new Date() : true
+              },
+            )
         : schema
     }),
 })

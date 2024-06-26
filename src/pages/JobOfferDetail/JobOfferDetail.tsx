@@ -221,6 +221,8 @@ const JobOfferDetail: FC<Props> = (props): JSX.Element => {
 
               <div className="mt-8 px-4 py-3 min-h-8 rounded-lg bg-white shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
                 <h4 className="text-xl font-semibold">Related jobs</h4>
+
+                <h4>Incoming</h4>
                 {/* <div
               dangerouslySetInnerHTML={{
                 __html: job?.description || '',
@@ -257,7 +259,9 @@ const JobOfferDetail: FC<Props> = (props): JSX.Element => {
                   </Tooltip>
                 </div>
 
-                <span className="mx-auto mt-4 text-blue-500 cursor-pointer hover:underline hover:text-violet-500">
+                <span
+                  onClick={() => navigate('/company/' + job?.company.id)}
+                  className="mx-auto mt-4 text-blue-500 cursor-pointer hover:underline hover:text-violet-500">
                   See company
                 </span>
               </div>
@@ -269,23 +273,23 @@ const JobOfferDetail: FC<Props> = (props): JSX.Element => {
                 <div className="flex flex-col my-3">
                   {job?.jobsCompany && job?.jobsCompany.length > 0 ? (
                     <div className="flex flex-col gap-4">
-                      {job?.jobsCompany.slice(0, 3).map((item, index) => (
+                      {job?.jobsCompany.slice(0, 5).map((item, index) => (
                         <div
                           key={index}
                           onClick={() => navigate('/jobs/' + item.id)}
                           className="border border-slate-300 px-2 py-2 rounded-md cursor-pointer hover:border-blue-500 hover:scale-105 transition-all duration-200">
                           <h4 className="font-medium">{item.jobTitle}</h4>
                           <div className="grid grid-cols-2">
-                            <span className="flex items-center gap-2 font-medium mt-1 text-blue-500">
-                              <FiDollarSign className="text-xl " />
+                            <span className="flex-shrink-0 text-sm flex items-center flex-nowrap gap-2 font-medium mt-1 text-blue-500">
+                              <FiDollarSign className="text-xl flex-shrink-0" />
                               {item.salary}
                             </span>
-                            <span className="flex items-center gap-2 font-medium mt-1">
+                            <span className="flex items-center gap-2 font-medium mt-1  text-sm">
                               <LiaBusinessTimeSolid className="text-xl " />
                               {item.jobType}
                             </span>
                           </div>
-                          <span className="flex items-center gap-2 font-medium mt-1">
+                          <span className="flex items-center gap-2 font-medium mt-1  text-sm">
                             <HiOutlineBriefcase className="text-xl " />
                             {item.experience}
                           </span>
@@ -296,8 +300,10 @@ const JobOfferDetail: FC<Props> = (props): JSX.Element => {
                     <span className="text-base mx-auto">There are no other jobs</span>
                   )}
 
-                  {job?.jobsCompany && job?.jobsCompany.length > 3 && (
-                    <span className="mx-auto mt-4 text-blue-500 cursor-pointer hover:underline hover:text-violet-500 flex items-center">
+                  {job?.jobsCompany && job?.jobsCompany.length > 5 && (
+                    <span
+                      onClick={() => navigate('/company/' + job.company.id)}
+                      className="mx-auto mt-4 text-blue-500 cursor-pointer hover:underline hover:text-violet-500 flex items-center">
                       See more
                       <HiArrowSmRight className="text-xl text-blue-500 cursor-pointer hover:underline hover:text-violet-500 " />
                     </span>

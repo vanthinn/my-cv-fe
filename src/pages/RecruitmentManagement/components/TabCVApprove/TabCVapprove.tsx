@@ -26,7 +26,7 @@ const TabCVApprove: FC<Props> = (props): JSX.Element => {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([
     {
-      field: 'name',
+      field: 'candidateName',
       sort: 'asc',
     },
   ])

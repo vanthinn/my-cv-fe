@@ -74,4 +74,12 @@ const updateStatusJobApply = (data: { id: string, status: string }) => {
 }
 
 
-export { getAllJobOffer, getJobById, applyJob, createJob, updateJob, getJoBApplyByJobId, deleteJobApply, getAllJobApply, updateStatusJobApply }
+const deleteJobOffer = (id: string) => {
+    return BaseURL({
+        url: `/job-offer/` + id,
+        method: "DELETE",
+    });
+}
+
+
+export { getAllJobOffer, getJobById, applyJob, createJob, updateJob, getJoBApplyByJobId, deleteJobApply, getAllJobApply, updateStatusJobApply, deleteJobOffer }

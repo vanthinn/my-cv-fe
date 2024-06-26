@@ -12,6 +12,7 @@ export interface IRecruitmentRequest {
     education?: string
     skills?: string[]
     deadline: string
+    status?: string
 }
 
 export interface IRecruitmentResponse extends IRecruitmentRequest {

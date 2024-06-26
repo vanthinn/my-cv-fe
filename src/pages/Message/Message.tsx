@@ -152,8 +152,6 @@ const Message: FC<Props> = (): JSX.Element => {
     }
   }
 
-  console.log(id)
-
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (imageFile !== null) {
@@ -232,7 +230,7 @@ const Message: FC<Props> = (): JSX.Element => {
           </div>
         </div>
       )}
-      {isGetConverSationByIdSuccess && (
+      {isGetConverSationByIdSuccess && id !== undefined && (
         <div className="flex h-full bg-white">
           <div className="flex flex-col w-full  ">
             <div

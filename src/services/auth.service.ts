@@ -17,4 +17,28 @@ const signUp = (data: IUser) => {
     });
 };
 
-export { login, signUp }
+const forgotPassword = (data: { email: string, tenantId: string }) => {
+    return BaseURL({
+        url: `/auth/forgot-password`,
+        method: "POST",
+        data,
+    });
+};
+
+const resetPassword = (data: any) => {
+    return BaseURL({
+        url: `/auth/reset-password`,
+        method: "POST",
+        data,
+    });
+};
+
+const changePassword = (data: any) => {
+    return BaseURL({
+        url: `/auth/change-password`,
+        method: "POST",
+        data,
+    });
+}
+
+export { login, signUp, forgotPassword, resetPassword, changePassword }

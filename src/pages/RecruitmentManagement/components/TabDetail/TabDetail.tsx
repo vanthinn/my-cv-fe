@@ -44,7 +44,7 @@ const TabDetail: FC<Props> = (props): JSX.Element => {
           <FiClock className="text-xs " />
           Create at {dayComparedToThePast(job?.createdAt || '')}
           {job?.updatedAt &&
-            ` - Update at ${dayComparedToThePast(job?.updatedAt || '')} `}
+            ` - Update at ${    (job?.updatedAt || '')} `}
         </span>
 
         <span className="text-sm font-medium mt-2 ml-auto">

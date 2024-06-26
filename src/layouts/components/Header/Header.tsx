@@ -100,7 +100,9 @@ const Header: FC<Props> = (): JSX.Element => {
       <Container>
         <div className="flex justify-between items-center ">
           <div className="flex items-center">
-            <div className="h-24 w-auto mr-8">
+            <div
+              onClick={() => navigate('/')}
+              className="h-24 w-auto mr-8 cursor-pointer">
               <img
                 className="h-full w-full object-cover "
                 src={logo}

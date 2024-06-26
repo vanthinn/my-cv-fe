@@ -16,7 +16,6 @@ import {
   notifyActionSelector,
   resumeActionSelector,
   resumeStateSelector,
-  userActionSelector,
 } from '../../../../store'
 import htmlToDraft from 'html-to-draftjs'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -58,6 +57,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
   const formRef = useRef<HTMLFormElement>(null)
   const [inputHobbies, setInputHobbies] = useState<string>('')
   const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [isLoading, setIsLoading] = useState(false)
 
   const onEditorStateChange = (editorState: EditorState) => {
     setEditorState(editorState)
@@ -86,7 +86,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
 
   const onSubmit = async (data: any) => {
     const dataHTML = draftToHtml(convertToRaw(editorState.getCurrentContent()))
-
+    setIsLoading(true)
     if (id) {
       const res = await updateCV({
         ...resumeData,
@@ -128,6 +128,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
         navigate('/preview-cv/' + res.id)
       }
     }
+    setIsLoading(false)
   }
 
   const handleNext = (e: React.MouseEvent<HTMLButtonElement>): void => {
@@ -297,6 +298,7 @@ const Objective: FC<Props> = ({ handleBack, activeStep }: Props): JSX.Element =>
         handleBack={handleBack}
         activeStep={activeStep}
         handleNext={handleNext}
+        isLoading={isLoading}
       />
     </div>
   )

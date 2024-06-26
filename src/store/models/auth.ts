@@ -1,7 +1,7 @@
 import { persist, action, Action, Thunk, thunk } from "easy-peasy";
 
 import { IUser, IUserLogin } from "../../types/IUser";
-import { login, signUp } from "../../services/auth.service";
+import { changePassword, forgotPassword, login, resetPassword, signUp } from "../../services/auth.service";
 
 // import { Socket } from 'socket.io-client';
 
@@ -32,20 +32,20 @@ export interface IAuthModel {
     setIsSignUpSuccess: Action<IAuthModel, boolean>;
     signUp: Thunk<IAuthModel, IUser>;
 
-    // //ForgotPassword
-    // isForgotPasswordSuccess: boolean;
-    // setIsForgotPasswordSuccess: Action<IAuthModel, boolean>;
-    // forgotPassword: Thunk<IAuthModel, { email: string }>;
+    //ForgotPassword
+    isForgotPasswordSuccess: boolean;
+    setIsForgotPasswordSuccess: Action<IAuthModel, boolean>;
+    forgotPassword: Thunk<IAuthModel, { email: string, tenantId: string }>;
 
-    // //ResetPassword
-    // isResetPasswordSuccess: boolean;
-    // setIsResetPasswordSuccess: Action<IAuthModel, boolean>;
-    // resetPassword: Thunk<IAuthModel, any>;
+    //ResetPassword
+    isResetPasswordSuccess: boolean;
+    setIsResetPasswordSuccess: Action<IAuthModel, boolean>;
+    resetPassword: Thunk<IAuthModel, any>;
 
-    // //ChangePassword
-    // isChangePasswordSuccess: boolean;
-    // setIsChangePasswordSuccess: Action<IAuthModel, boolean>;
-    // changePassword: Thunk<IAuthModel, any>;
+    //ChangePassword
+    isChangePasswordSuccess: boolean;
+    setIsChangePasswordSuccess: Action<IAuthModel, boolean>;
+    changePassword: Thunk<IAuthModel, any>;
 }
 
 export const authModel: IAuthModel = persist({
@@ -112,53 +112,54 @@ export const authModel: IAuthModel = persist({
     }),
 
     //ForgotPassword
-    // isForgotPasswordSuccess: true,
-    // setIsForgotPasswordSuccess: action((state, payload) => {
-    //     state.isForgotPasswordSuccess = payload;
-    // }),
-    // forgotPassword: thunk(async (actions, payload) => {
-    //     return forgotPassword(payload)
-    //         .then(async (res) => {
-    //             actions.setIsForgotPasswordSuccess(true)
-    //             return res;
-    //         })
-    //         .catch((error) => {
-    //             actions.setIsForgotPasswordSuccess(false)
-    //             actions.setMessageError(error?.response?.data?.message)
-    //         });
-    // }),
+    isForgotPasswordSuccess: true,
+    setIsForgotPasswordSuccess: action((state, payload) => {
+        state.isForgotPasswordSuccess = payload;
+    }),
+    forgotPassword: thunk(async (actions, payload) => {
+        return forgotPassword(payload)
+            .then(async (res) => {
+                actions.setIsForgotPasswordSuccess(true)
+                actions.setMessageError('')
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsForgotPasswordSuccess(false)
+                actions.setMessageError(error?.response?.data?.message)
+            });
+    }),
 
     //ResetPassword
-    // isResetPasswordSuccess: true,
-    // setIsResetPasswordSuccess: action((state, payload) => {
-    //     state.isResetPasswordSuccess = payload;
-    // }),
-    // resetPassword: thunk(async (actions, payload) => {
-    //     return resetPassword(payload)
-    //         .then(async (res) => {
-    //             actions.setIsResetPasswordSuccess(true)
-    //             return res;
-    //         })
-    //         .catch((error) => {
-    //             actions.setIsResetPasswordSuccess(false)
-    //             actions.setMessageError(error?.response?.data?.message)
-    //         });
-    // }),
+    isResetPasswordSuccess: true,
+    setIsResetPasswordSuccess: action((state, payload) => {
+        state.isResetPasswordSuccess = payload;
+    }),
+    resetPassword: thunk(async (actions, payload) => {
+        return resetPassword(payload)
+            .then(async (res) => {
+                actions.setIsResetPasswordSuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsResetPasswordSuccess(false)
+                actions.setMessageError(error?.response?.data?.message)
+            });
+    }),
 
     //ChangePassword
-    // isChangePasswordSuccess: true,
-    // setIsChangePasswordSuccess: action((state, payload) => {
-    //     state.isChangePasswordSuccess = payload;
-    // }),
-    // changePassword: thunk(async (actions, payload) => {
-    //     return changePassword(payload)
-    //         .then(async (res) => {
-    //             actions.setIsChangePasswordSuccess(true)
-    //             return res;
-    //         })
-    //         .catch((error) => {
-    //             actions.setIsChangePasswordSuccess(false)
-    //             actions.setMessageError(error?.response?.data?.message)
-    //         });
-    // }),
+    isChangePasswordSuccess: true,
+    setIsChangePasswordSuccess: action((state, payload) => {
+        state.isChangePasswordSuccess = payload;
+    }),
+    changePassword: thunk(async (actions, payload) => {
+        return changePassword(payload)
+            .then(async (res) => {
+                actions.setIsChangePasswordSuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsChangePasswordSuccess(false)
+                actions.setMessageError(error?.response?.data?.message)
+            });
+    }),
 })

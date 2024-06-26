@@ -366,9 +366,24 @@ export const fieldOfActivityData = [
     id: 'Automotive',
   },
   {
+    label: 'Telecommunications',
+    name: 'Telecommunications',
+    id: 'Telecommunications',
+  },
+  {
     label: 'Hospital & Health Care',
     name: 'Hospital & Health Care',
     id: 'Hospital & Health Care',
+  },
+  {
+    label: "Marketing and Advertising",
+    name: "Marketing and Advertising",
+    id: 'Marketing and Advertising'
+  },
+  {
+    label: "Computer Software",
+    name: "Computer Software",
+    id: 'Computer Software'
   },
   {
     label: 'Architecture & Planning',

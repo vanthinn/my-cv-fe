@@ -7,6 +7,7 @@ interface Props {
   handleBack: () => void
   handleNext: any
   type?: string
+  isLoading?: boolean
 }
 
 const ButtonNextBack: FC<Props> = ({
@@ -14,6 +15,7 @@ const ButtonNextBack: FC<Props> = ({
   handleBack,
   handleNext,
   type,
+  isLoading,
 }: Props): JSX.Element => {
   return (
     <div className="flex justify-between mt-8">
@@ -43,6 +45,8 @@ const ButtonNextBack: FC<Props> = ({
           <Box sx={{ flex: '1 1 auto' }} />
           <Button
             type="submit"
+            loading={isLoading || false}
+            disabled={isLoading || false}
             onClick={handleNext}>
             {activeStep < 4 ? 'Next' : 'Finish'}
           </Button>{' '}

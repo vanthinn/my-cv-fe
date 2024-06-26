@@ -56,6 +56,7 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
       search: inputSearch,
       companyId: id,
       userId: currentUserSuccess ? currentUserSuccess.id : undefined,
+      status: 'ACTIVE',
     })
     if (res) {
       setTotalRowCount(res?.totalRecords)
@@ -103,18 +104,11 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
 
         <div className="flex flex-col ">
           <h2 className="text-2xl font-semibold">{company?.displayName}</h2>
-          <div></div>
-          <div
-            className="mt-1 text-lg text-slate-400 "
-            dangerouslySetInnerHTML={{
-              __html: company?.description || '',
-            }}
-          />
 
           <div className="mt-2 grid grid-cols-2 gap-2">
-            <div className="flex gap-4">
-              <span className="text-gray-500">Field of Activity:</span>
-              <span className="font-medium">{company?.fieldOfActivity}</span>
+            <div className="flex gap-4 items-start">
+              <span className="text-gray-500  whitespace-nowrap">Field of Activity:</span>
+              <span className="font-medium break-words">{company?.fieldOfActivity}</span>
             </div>
 
             <div className="flex gap-4 ml-32">
@@ -131,7 +125,7 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
               <span className="text-gray-500">Website:</span>
               <a
                 href={company?.website}
-                className="font-medium text-blue-500">
+                className="font-medium text-blue-500 break-words">
                 {company?.website}
               </a>
             </div>
@@ -174,7 +168,7 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
               <div
                 key={index}
                 onClick={() => navigate('/jobs/' + job.id)}
-                className="border border-slate-300 min-h-8 px-3 py-3 hover:cursor-pointer hover:shadow-2xl hover:shadow-blue-500/20 rounded-md shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
+                className="flex flex-col border border-slate-300 min-h-8 px-3 py-3 hover:cursor-pointer hover:shadow-2xl hover:shadow-blue-500/20 rounded-md shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)]">
                 <div className="flex justify-between items-center">
                   <Tooltip title={job.jobTitle}>
                     <h4 className="line-clamp-1 text-xl font-medium text-gray-700 ">
@@ -200,7 +194,7 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
                   )}
                 </div>
 
-                <div
+                {/* <div
                   style={{ paddingBottom: '16px' }}
                   className="mt-4  flex gap-4 items-center border-b border-slate-300 ">
                   <img
@@ -220,15 +214,15 @@ const CompanyDetail: FC<Props> = (props): JSX.Element => {
                       </Tooltip>
                     </div>
                   </div>
-                </div>
+                </div> */}
 
-                <div className="mt-3  flex justify-between">
-                  <div className="flex gap-2 text-[15px] ">
+                <div className="mt-auto  flex justify-between ">
+                  <div className="flex gap-2 text-[15px] mt-3 ">
                     <span className="text-red-500">Deadline: </span>
                     <span className="text-red-500">{formatDayVN(job.deadline)}</span>
                   </div>
                   <Tooltip title="Bookmark">
-                    <div className="hover:text-blue-600 cursor-pointer">
+                    <div className="hover:text-blue-600 cursor-pointer mt-3">
                       <HiOutlineBookmark className="text-xl hover:text-blue-500" />
                     </div>
                   </Tooltip>

@@ -11,7 +11,7 @@ const BasicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
     <div
       id="cv-template"
       style={{ fontFamily: resumeData.fontStyle || fonts[0].value }}
-      className="bg-slate-200  flex justify-center items-center w-full flex-1">
+      className="">
       <main className="relative bg-white shadow-lg shadow-black/30 w-full h-auto">
         <div className="flex flex-row flex-1 h-auto items-stretch">
           <div className="w-1/3  bg-gray-800/90 flex flex-col gap-4 text-white">

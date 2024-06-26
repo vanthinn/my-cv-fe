@@ -14,7 +14,7 @@ const ClassicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
           id="classic-template"
           style={{ fontFamily: resumeData.fontStyle || fonts[0].value }}
           className="font-jost hyphens-manual">
-          <section className="p-3 my-auto mx-auto  bg-gray-100 rounded-2xl border-4 border-gray-700 sm:p-9 md:p-16  print:border-0 page print:max-w-letter print:max-h-letter print:mx-0 print:my-o xsm:p-8 print:bg-white md:max-w-letter md:h-letter lg:h-letter">
+          <section className="p-3 my-auto mx-auto  bg-gray-100 border-4 border-gray-700 sm:p-9 md:p-16  print:border-0 page print:max-w-letter print:max-h-letter print:mx-0 print:my-o xsm:p-8 print:bg-white md:max-w-letter md:h-letter lg:h-letter">
             <header className="inline-flex justify-between items-baseline mb-2 w-full align-top border-b-4 border-gray-300">
               <section className="block">
                 <h1 className="mb-0 text-5xl font-bold text-gray-700">

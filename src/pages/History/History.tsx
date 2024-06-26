@@ -21,7 +21,6 @@ const History: FC<Props> = (props): JSX.Element => {
     const res = await getHistoryApply()
     if (res) {
       setData(res)
-      console.log(res)
     }
   }
 
@@ -48,7 +47,8 @@ const History: FC<Props> = (props): JSX.Element => {
           data.map((item, index) => (
             <div
               key={index}
-              className="border px-4 py-2 rounded-lg">
+              onClick={() => navigate('/jobs/' + item.job.id)}
+              className="border px-4 py-2 rounded-lg cursor-pointer hover:shadow-lg transition-all duration-200">
               <div className="flex justify-between items-center">
                 <h4 className="text-xl font-medium flex-1 line-clamp-1">
                   {item?.job?.jobTitle}
@@ -76,16 +76,22 @@ const History: FC<Props> = (props): JSX.Element => {
                     {item.job.education}
                   </li>
                 )}
-                <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
-                  <span className="font-semibold text-slate-200">
-                    {daysUntil(item.job.deadline)}
-                  </span>{' '}
-                  days left to apply
-                </li>
+
+                {Number(daysUntil(item.job.deadline)) > 0 ? (
+                  <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
+                    <span className="font-semibold text-slate-200">
+                      {daysUntil(item.job.deadline)}
+                    </span>{' '}
+                    days left to apply
+                  </li>
+                ) : (
+                  <li className="list-none px-2 py-0.5 bg-blue-400 text-white rounded-md text-sm">
+                    Submission deadline
+                  </li>
+                )}
               </div>
 
               <div
-                onClick={() => navigate('/jobs/' + item.job.id)}
                 style={{ paddingBottom: '16px' }}
                 className="mt-4  flex gap-4 items-center ">
                 <img

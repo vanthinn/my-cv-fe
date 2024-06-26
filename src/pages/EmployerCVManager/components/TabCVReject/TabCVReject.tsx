@@ -10,18 +10,41 @@ import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material'
 import { IResumeApply } from '../../../../types/IResume'
 import { formatDateLocalV2 } from '../../../../utils/functions/formatDay'
 import { useStoreActions, useStoreState } from 'easy-peasy'
-import { companyStateSelector, jobActionSelector } from '../../../../store'
+import {
+  companyStateSelector,
+  jobActionSelector,
+  jobStateSelector,
+  notifyActionSelector,
+} from '../../../../store'
 import ModalShowImageCV from '../../../RecruitmentManagement/components/ModalShowImageCV'
+import Loading from '../../../../layouts/components/Loading'
 
 interface Props {}
 
 interface IActionMenu {
   params: any
+  getAllJobApplyHome: any
+  setLoadingPage: any
 }
 
-function ActionsMenu({ params }: IActionMenu) {
+function ActionsMenu({ params, getAllJobApplyHome, setLoadingPage }: IActionMenu) {
   const [anchorEl, setAnchorEl] = useState(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const { updateStatusJobApply, setIsUpdateStatusJobApplySuccess } =
+    useStoreActions(jobActionSelector)
+  const { isUpdateStatusJobApplySuccess, messageErrorJob } =
+    useStoreState(jobStateSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
+
+  useEffect(() => {
+    if (!isUpdateStatusJobApplySuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorJob,
+      })
+      setIsUpdateStatusJobApplySuccess(true)
+    }
+  }, [isUpdateStatusJobApplySuccess])
 
   const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget)
@@ -31,19 +54,48 @@ function ActionsMenu({ params }: IActionMenu) {
     setAnchorEl(null)
   }
 
-  const handleApproveClick = async () => {}
+  const handleApproveClick = async () => {
+    setLoadingPage(true)
+    const res = await updateStatusJobApply({ id: params.id, status: 'APPROVED' })
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Approved cv successful',
+      })
+      getAllJobApplyHome()
+    }
+    setLoadingPage(false)
+  }
 
-  const handleRejectClick = async () => {}
+  const handleRejectClick = async () => {
+    setLoadingPage(true)
+    const res = await updateStatusJobApply({ id: params.id, status: 'REJECT' })
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Reject cv successful',
+      })
+      getAllJobApplyHome()
+    }
+    setLoadingPage(false)
+  }
 
   return (
     <>
       <>
         <div className={`lg:flex gap-2 xs:hidden`}>
           <Button
-            loading={loading}
             onClick={handleApproveClick}
             typeButton="approve">
             Approve
+          </Button>
+          <Button
+            className="px-4 rounded-md"
+            onClick={handleRejectClick}
+            typeButton="reject">
+            Reject
           </Button>
         </div>
       </>
@@ -61,11 +113,13 @@ function ActionsMenu({ params }: IActionMenu) {
           keepMounted
           open={Boolean(anchorEl)}
           onClose={handleClose}>
-          <MenuItem
-            disabled={loading}
-            onClick={handleApproveClick}>
+          <MenuItem onClick={handleApproveClick}>
             <DoneIcon className="text-green-600" />
             <span className="ml-2 text-green-600"> Approve</span>
+          </MenuItem>
+          <MenuItem onClick={handleRejectClick}>
+            <ClearIcon className="text-red-600" />
+            <span className="ml-2 text-red-600"> Reject</span>
           </MenuItem>
         </Menu>
       </div>
@@ -93,6 +147,7 @@ const TabCVReject: FC<Props> = (props): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [imageCV, setImageCV] = useState('')
   const [openModalCV, setOpenModalCV] = useState(false)
+  const [loadingPage, setLoadingPage] = useState<boolean>(false)
 
   const getAllJobApplyHome = async () => {
     setLoading(true)
@@ -235,7 +290,11 @@ const TabCVReject: FC<Props> = (props): JSX.Element => {
       sortable: false,
       disableSelectionOnClick: false,
       renderCell: (params: GridRenderCellParams<any, any>) => (
-        <ActionsMenu params={params} />
+        <ActionsMenu
+          params={params}
+          setLoadingPage={setLoadingPage}
+          getAllJobApplyHome={getAllJobApplyHome}
+        />
       ),
     },
   ]
@@ -272,6 +331,8 @@ const TabCVReject: FC<Props> = (props): JSX.Element => {
           image={imageCV}
         />
       )}
+
+      {loadingPage && <Loading />}
     </>
   )
 }

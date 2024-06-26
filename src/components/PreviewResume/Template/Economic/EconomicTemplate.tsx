@@ -56,17 +56,15 @@ const EconomicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
               </a>
             </li>
           </ul>
-          <div className="flex justify-between items-center">
-            <div>
-              <div
-                className="bg-cover bg-no-repeat rounded-full h-52 w-52"
-                style={{ backgroundImage: `url(${resumeData.profile.avatarUrl})` }}></div>
-            </div>
-            <div className="grid justify-items-end ml-4">
-              <h1 className="text-6xl font-extrabold">
+          <div className="flex justify-between items-center gap-4">
+            <div
+              className="bg-cover bg-no-repeat rounded-full h-48 w-48 flex-shrink-0"
+              style={{ backgroundImage: `url(${resumeData.profile.avatarUrl})` }}></div>
+            <div className="flex flex-col justify-items-end flex-1">
+              <h1 className="text-5xl font-extrabold ml-auto w-full text-right ">
                 {resumeData.profile.firstName + ' ' + resumeData.profile.lastName}
               </h1>
-              <p className="text-xl mt-5">{resumeData.title}</p>
+              <p className="text-xl mt-5 w-full text-right">{resumeData.title}</p>
             </div>
           </div>
         </header>
@@ -170,7 +168,7 @@ const EconomicTemplate: FC<Props> = ({ resumeData }: Props): JSX.Element => {
           <div className="w-4/6">
             <section>
               <h2 className="text-2xl pb-1 border-b font-semibold">About</h2>
-              <p className="mt-4 text-xs">
+              <p className="mt-4 text-sm">
                 <div
                   dangerouslySetInnerHTML={{
                     __html: resumeData.summary || '',

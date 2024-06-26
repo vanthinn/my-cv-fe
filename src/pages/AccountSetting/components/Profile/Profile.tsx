@@ -62,7 +62,7 @@ const schema = yup.object().shape({
   gender: yup.string().required('Gender is required'),
 })
 
-const Profile: FC<Props> = (props): JSX.Element => {
+const Profile: FC<Props> = (): JSX.Element => {
   const { currentUserSuccess, isEditUserSuccess, messageErrorUser } =
     useStoreState(userStateSelector)
   const { postImage, editEdit, setIsEditUserSuccess, setCurrentUserSuccess } =
@@ -71,6 +71,7 @@ const Profile: FC<Props> = (props): JSX.Element => {
   const ImageRef: any = useRef()
   const [Images, setImages] = useState<Image[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoadingForm, setIsLoadingForm] = useState<boolean>(false)
 
   const defaultValues: IProfileCV = {
     id: currentUserSuccess?.id || '',
@@ -135,7 +136,7 @@ const Profile: FC<Props> = (props): JSX.Element => {
 
   const onSubmit = async (data: any) => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
-    setIsLoading(true)
+    setIsLoadingForm(true)
     const res = await editEdit(data)
     if (res.status === 200) {
       setNotifySetting({
@@ -145,7 +146,7 @@ const Profile: FC<Props> = (props): JSX.Element => {
       })
       setCurrentUserSuccess(res.data)
     }
-    setIsLoading(false)
+    setIsLoadingForm(false)
   }
 
   useEffect(() => {
@@ -337,14 +338,8 @@ const Profile: FC<Props> = (props): JSX.Element => {
         <div className="mt-6 flex justify-end">
           <div className="flex gap-4">
             <Button
-              typeButton="cancel"
-              onClick={(e) => {
-                e.preventDefault()
-              }}
-              className="px-2 py-1">
-              Cancel
-            </Button>
-            <Button
+              disabled={isLoadingForm}
+              loading={isLoadingForm}
               type="submit"
               className="px-2 py-1">
               Save

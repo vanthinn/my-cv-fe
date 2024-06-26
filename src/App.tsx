@@ -18,6 +18,7 @@ import NotFound from './pages/NotFound'
 import ProtectedRouteEmployer from './routes/ProtectedRouteEmployer/ProtectedRouteEmployer'
 import ProtectedRouteUser from './routes/ProtectedRouteUser/ProtectedRouteUser'
 import socket from './utils/socket/socketConfig'
+import ForgotPassword from './pages/Auth/ForgotPassword'
 
 function App() {
   const { notifySetting } = useStoreState(notifyStateSelector)
@@ -39,6 +40,8 @@ function App() {
   useEffect(() => {
     if (auth) {
       setAccessToken(auth.accessToken)
+    } else {
+      setAccessToken('')
     }
   }, [auth])
 
@@ -58,7 +61,12 @@ function App() {
         console.log('Socket connected')
       })
     }
-  }, [isLoginSuccess])
+
+    return () => {
+      socket.off('connect')
+      socket.disconnect()
+    }
+  }, [accessToken])
   return (
     <>
       <Routes>
@@ -113,6 +121,11 @@ function App() {
         <Route
           path="/employer/auth/register"
           element={<Register />}
+        />
+
+        <Route
+          path="/auth/forgot-password"
+          element={<ForgotPassword />}
         />
         <Route
           path="*"

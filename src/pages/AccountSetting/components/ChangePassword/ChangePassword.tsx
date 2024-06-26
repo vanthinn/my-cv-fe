@@ -1,17 +1,18 @@
 import { FC, useState } from 'react'
-import { IOption } from '../../../../types/ICommon'
-import { Gender } from '../../../../common/enum'
 import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { IDataChangePassword } from '../../../../components/ModalChangePassword/ModalChangePassword'
 import TextFieldV2 from '../../../../components/TextFieldV2'
 import Button from '../../../../components/Button'
+import { useStoreActions } from 'easy-peasy'
+import { authActionSelector, notifyActionSelector } from '../../../../store'
+import { useNavigate } from 'react-router-dom'
 
 interface Props {}
 
 const schema = yup.object().shape({
-  password: yup.string().required('Password is required'),
+  oldPassword: yup.string().required('Password is required'),
   newPassword: yup.string().required('New Password is required'),
   confirmPassword: yup
     .string()
@@ -19,9 +20,12 @@ const schema = yup.object().shape({
     .oneOf([yup.ref('newPassword')], 'Passwords must match'),
 })
 
-const ChangePassword: FC<Props> = (props): JSX.Element => {
+const ChangePassword: FC<Props> = (): JSX.Element => {
+  const navigate = useNavigate()
+  const { changePassword } = useStoreActions(authActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const defaultValues: IDataChangePassword = {
-    password: '',
+    oldPassword: '',
     newPassword: '',
     confirmPassword: '',
   }
@@ -33,7 +37,19 @@ const ChangePassword: FC<Props> = (props): JSX.Element => {
 
   const [loading, setLoading] = useState<boolean>(false)
 
-  const onSubmit = async (data: IDataChangePassword): Promise<void> => {}
+  const onSubmit = async (data: IDataChangePassword): Promise<void> => {
+    setLoading(true)
+    const res = await changePassword(data)
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Change password successfully',
+      })
+      navigate('/employer/account-setting/profile')
+    }
+    setLoading(false)
+  }
   return (
     <div className="flex flex-col border border-slate-200 flex-1 h-full px-4 py-2 rounded-md">
       <h4 className="font-semibold">Change password</h4>
@@ -46,7 +62,7 @@ const ChangePassword: FC<Props> = (props): JSX.Element => {
             Password <span className="text-red-600">*</span>
           </label>
           <Controller
-            name="password"
+            name="oldPassword"
             control={control}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <TextFieldV2
@@ -112,6 +128,8 @@ const ChangePassword: FC<Props> = (props): JSX.Element => {
             Cancel
           </Button>
           <Button
+            disabled={loading}
+            loading={loading}
             type="submit"
             className="px-2 py-1">
             Save

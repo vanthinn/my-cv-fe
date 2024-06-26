@@ -2,7 +2,7 @@ import { FC } from 'react'
 
 interface Props {}
 
-const JobItem: FC<Props> = (props): JSX.Element => {
+const JobItem: FC<Props> = (): JSX.Element => {
   return <div>JobItem</div>
 }
 

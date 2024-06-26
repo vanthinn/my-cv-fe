@@ -1,11 +1,12 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, useState } from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { Controller, useForm } from 'react-hook-form'
-import { useStoreActions, useStoreState } from 'easy-peasy'
 import TextFieldCustom from '../TextField'
 import Button from '../Button'
+import { useStoreActions } from 'easy-peasy'
+import { authActionSelector, notifyActionSelector } from '../../store'
 
 interface Props {
   open: boolean
@@ -13,19 +14,19 @@ interface Props {
 }
 
 export interface IDataChangePassword {
-  password: string
+  oldPassword: string
   newPassword: string
   confirmPassword: string
 }
 
 const defaultValues: IDataChangePassword = {
-  password: '',
+  oldPassword: '',
   newPassword: '',
   confirmPassword: '',
 }
 
 const schema = yup.object().shape({
-  password: yup.string().required('Password is required'),
+  oldPassword: yup.string().required('Password is required'),
   newPassword: yup.string().required('New Password is required'),
   confirmPassword: yup
     .string()
@@ -34,6 +35,8 @@ const schema = yup.object().shape({
 })
 
 const ModalChangePassword: FC<Props> = ({ open, setOpen }: Props): JSX.Element => {
+  const { changePassword } = useStoreActions(authActionSelector)
+  const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const { handleSubmit, control } = useForm<IDataChangePassword>({
     defaultValues: defaultValues,
     resolver: yupResolver(schema),
@@ -41,7 +44,19 @@ const ModalChangePassword: FC<Props> = ({ open, setOpen }: Props): JSX.Element =
 
   const [loading, setLoading] = useState<boolean>(false)
 
-  const onSubmit = async (data: IDataChangePassword): Promise<void> => {}
+  const onSubmit = async (data: IDataChangePassword): Promise<void> => {
+    setLoading(true)
+    const res = await changePassword(data)
+    if (res) {
+      setNotifySetting({
+        show: true,
+        status: 'success',
+        message: 'Change password successfully',
+      })
+    }
+    setLoading(false)
+    setOpen(false)
+  }
 
   return (
     <div>
@@ -88,7 +103,7 @@ const ModalChangePassword: FC<Props> = ({ open, setOpen }: Props): JSX.Element =
                       onSubmit={handleSubmit(onSubmit)}
                       className="flex flex-col gap-2 w-full px-2">
                       <Controller
-                        name="password"
+                        name="oldPassword"
                         control={control}
                         render={({
                           field: { onChange, value },

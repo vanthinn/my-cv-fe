@@ -47,6 +47,7 @@ const schema = yup.object().shape({
   GPA: yup
     .number()
     .nullable()
+    .min(0, 'GPA must be 0 or more')
     .max(4, 'GPA must be 4 or less')
     .typeError('GPA must be a number'),
 })

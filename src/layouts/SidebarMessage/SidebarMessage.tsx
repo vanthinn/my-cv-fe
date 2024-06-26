@@ -83,9 +83,7 @@ const SidebarMessage: FC<Props> = (): JSX.Element => {
 
   useEffect(() => {
     if (currentConversation?.users === undefined) {
-      const newData = listConversation.find(
-        (item: any) => item.id === currentConversation?.id,
-      )
+      const newData = listConversation.find((item: any) => item.id === id)
       if (newData) {
         setCurrentConversation(newData)
       }

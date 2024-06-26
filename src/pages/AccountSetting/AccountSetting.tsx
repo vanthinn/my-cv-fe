@@ -1,21 +1,26 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   HiOutlineDocumentText,
   HiOutlineLockClosed,
   HiOutlineOfficeBuilding,
   HiOutlineUser,
 } from 'react-icons/hi'
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 interface Props {}
 
 const Navbar = () => {
+  const { pathname } = useLocation()
+  const path = pathname.split('/')[2] || 'profile'
+  const [pathSelected, setPathSelected] = useState(path)
   return (
     <ul className="border border-slate-300 h-full rounded-md overflow-hidden  ">
       <li className="">
         <Link
           to="profile"
-          className="text-sm font-medium px-3 py-2 border-b border-gray-300 hover:bg-slate-200 cursor-pointer flex items-center gap-2">
+          className={`text-sm font-medium px-3 py-2 border-b border-gray-300 hover:bg-slate-200 cursor-pointer flex items-center gap-2 ${
+            pathSelected === 'profile' && 'bg-slate-200'
+          }`}>
           <HiOutlineUser />
           Profile
         </Link>
@@ -25,7 +30,7 @@ const Navbar = () => {
           to="info-company"
           className="text-sm font-medium px-3 py-2 border-b border-gray-300 hover:bg-slate-200 cursor-pointer flex items-center gap-2">
           <HiOutlineOfficeBuilding />
-          Information company
+          Company Information
         </Link>
       </li>
       <li className="">

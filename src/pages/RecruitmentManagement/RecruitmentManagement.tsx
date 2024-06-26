@@ -17,22 +17,31 @@ import {
   jobActionSelector,
   jobStateSelector,
   notifyActionSelector,
+  userStateSelector,
 } from '../../store'
 import test from '../../assets/images/Nhung-nguoi-cam-lap-cty.png'
 import { useDebounce } from '../../hooks/useDebounce'
 import { formatDayVN } from '../../utils/functions/formatDay'
+import ModalConfirm from '../../components/ModalConfirm'
 interface Props {}
 
 const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
   const navigate = useNavigate()
-  const { messageErrorJob, isCreateJobSuccess, isUpdateJobSuccess } =
-    useStoreState(jobStateSelector)
+  const {
+    messageErrorJob,
+    isCreateJobSuccess,
+    isUpdateJobSuccess,
+    isDeleteJobOfferSuccess,
+  } = useStoreState(jobStateSelector)
+  const { currentUserSuccess } = useStoreState(userStateSelector)
   const {
     createJob,
     setIsCreateJobSuccess,
     getAllJob,
     updateJob,
     setIsUpdateJobSuccess,
+    deleteJobOffer,
+    setIsDeleteJobOfferSuccess,
   } = useStoreActions(jobActionSelector)
   const { setNotifySetting } = useStoreActions(notifyActionSelector)
   const { company } = useStoreState(companyStateSelector)
@@ -53,6 +62,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
   ])
   const [loading, setLoading] = useState<boolean>(false)
   const [isOpenModalAddEdit, setIsOpenModalAddEdit] = useState<boolean>(false)
+  const [openModalDelete, setOpenModalDelete] = useState<boolean>(false)
 
   const getAllJobHome = async () => {
     setLoading(true)
@@ -105,6 +115,23 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
     setLoading(false)
   }
 
+  const handleDelete = async () => {
+    if (rowSelected) {
+      setLoading(true)
+      const res = await deleteJobOffer(rowSelected.id || '')
+      if (res) {
+        setNotifySetting({
+          show: true,
+          status: 'success',
+          message: 'Delete job successful',
+        })
+        getAllJobHome()
+      }
+      setOpenModalDelete(false)
+      setLoading(false)
+    }
+  }
+
   const handleSortModelChange = useCallback((newSortModel: GridSortModel) => {
     setSortModel(newSortModel)
   }, [])
@@ -130,6 +157,17 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       setIsUpdateJobSuccess(true)
     }
   }, [isUpdateJobSuccess])
+
+  useEffect(() => {
+    if (!isDeleteJobOfferSuccess) {
+      setNotifySetting({
+        show: true,
+        status: 'error',
+        message: messageErrorJob,
+      })
+      setIsDeleteJobOfferSuccess(true)
+    }
+  }, [isDeleteJobOfferSuccess])
 
   const debounced = useDebounce(inputSearch, 500)
 
@@ -170,7 +208,7 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       field: 'salary',
       headerName: 'Salary',
       type: 'string',
-      flex: 1.5,
+      flex: 1,
       minWidth: 150,
       align: 'left',
       headerAlign: 'left',
@@ -250,6 +288,26 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
       ),
     },
     {
+      field: 'status',
+      headerName: 'Status',
+      type: 'number',
+      minWidth: 100,
+      flex: 1,
+      align: 'left',
+      headerAlign: 'left',
+      disableColumnMenu: true,
+      hideable: false,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams<any, number>) => (
+        <p
+          className={`text-black line-clamp-1 text-[12px] px-4 py-1 rounded-3xl ${
+            params.row.status === 'ACTIVE' ? 'bg-red-300' : 'bg-slate-100'
+          } `}>
+          {params.row.status}
+        </p>
+      ),
+    },
+    {
       field: 'action',
       headerName: 'Action',
       maxWidth: 120,
@@ -279,13 +337,38 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
           <EditIcon
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              setRowSelected(params.params.row)
-              setIsOpenModalAddEdit(true)
+              if (params.params.row.user.id !== currentUserSuccess?.id) {
+                setNotifySetting({
+                  show: true,
+                  status: 'error',
+                  message: 'Job can only be edited and deleted by the creator',
+                })
+              } else if (params.params.row.status === 'INACTIVE') {
+                setNotifySetting({
+                  show: true,
+                  status: 'error',
+                  message: 'Job cannot be edited',
+                })
+              } else {
+                setRowSelected(params.params.row)
+                setIsOpenModalAddEdit(true)
+              }
             }}
           />
           <DeleteIcon
             sx={{ color: '#d32f2f', cursor: 'pointer' }}
-            onClick={() => {}}
+            onClick={() => {
+              if (params.params.row.user.id !== currentUserSuccess?.id) {
+                setNotifySetting({
+                  show: true,
+                  status: 'error',
+                  message: 'Job can only be edited and deleted by the creator',
+                })
+              } else {
+                setRowSelected(params.params.row)
+                setOpenModalDelete(true)
+              }
+            }}
           />
         </div>
       </>
@@ -303,11 +386,13 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
                 type="search"
                 onChange={handleChangeSearch}
                 value={inputSearch}
-                placeholder="Search by candidate name"
+                placeholder="Search by job title"
                 width="350px"
               />
               <Button
-                onClick={() => setIsOpenModalAddEdit(true)}
+                onClick={() => {
+                  setRowSelected(undefined), setIsOpenModalAddEdit(true)
+                }}
                 className="flex items-center">
                 <HiPlusSm className="mr-2 text-xl" />
                 Add new job
@@ -352,6 +437,16 @@ const RecruitmentManagement: FC<Props> = (props): JSX.Element => {
           setOpen={setIsOpenModalAddEdit}
           data={rowSelected}
           handleAction={handleAction}
+        />
+      )}
+
+      {openModalDelete && (
+        <ModalConfirm
+          open={openModalDelete}
+          handleClose={() => {
+            setOpenModalDelete(false)
+          }}
+          handleDelete={handleDelete}
         />
       )}
     </>

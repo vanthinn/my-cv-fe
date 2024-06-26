@@ -14,6 +14,7 @@ import { companyActionSelector, companyStateSelector } from '../../../../store'
 import { pageMode } from '../../../../types/ICommon'
 import { useDebounce } from '../../../../hooks/useDebounce'
 import { Pagination } from '@mui/material'
+import avatar_default from '../../../../assets/images/avatar_default.png'
 
 interface Props {}
 
@@ -107,7 +108,7 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
                   <div className="flex gap-4 items-center">
                     <div className="flex-shrink-0 h-12 w-12 border border-gray-200 rounded-lg">
                       <img
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                         src={item.logoUrl}
                         alt=""
                       />
@@ -148,98 +149,127 @@ const InfoCompany: FC<Props> = (props): JSX.Element => {
         )}
 
         {company && (
-          <div className="relative bg-white p-4 mt-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-lg flex flex-col">
-            <div className="flex items-center space-x-4 mb-4">
-              <div className="rounded-full border border-slate-200 h-12 w-12 flex items-center justify-center">
-                <img
-                  src={company.logoUrl}
-                  alt=""
-                />
+          <>
+            <div className="relative bg-white p-4 mt-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-lg flex flex-col">
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="flex-shrink-0 rounded-full border border-slate-200 h-12 w-12 flex items-center justify-center">
+                  <img
+                    src={company.logoUrl}
+                    alt=""
+                  />
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold">{company.displayName}</h4>
+                  <span className="text-[15px]">{company.address}</span>
+                </div>
               </div>
-              <div>
-                <h4 className="text-xl font-semibold">{company.displayName}</h4>
-                <span className="text-[15px]">{company.address}</span>
+
+              <div className="grid grid-cols-2 gap-2 text-sm g">
+                <div className="grid grid-cols-2 justify-start">
+                  <label
+                    className="font-semibold"
+                    htmlFor="">
+                    Field of activity:
+                  </label>
+                  <span>{company.fieldOfActivity}</span>
+                </div>
+
+                <div className="grid grid-cols-2 justify-start">
+                  <label
+                    className="font-semibold"
+                    htmlFor="">
+                    Scale:
+                  </label>
+                  <span>{company.scale}</span>
+                </div>
+
+                <div className="grid grid-cols-2 justify-start ">
+                  <label
+                    className="font-semibold"
+                    htmlFor="">
+                    Website:
+                  </label>
+                  <a
+                    target="_blank"
+                    href={company.website ? company.website : ''}
+                    className="break-words text-blue-600">
+                    {company.website ? company.website : '--'}
+                  </a>
+                </div>
+                <div className="grid grid-cols-2 justify-start">
+                  <label
+                    className="font-semibold"
+                    htmlFor="">
+                    Email:
+                  </label>
+                  <span>{company.email}</span>
+                </div>
+
+                <div className="grid grid-cols-2 justify-start">
+                  <label
+                    className="font-semibold"
+                    htmlFor="">
+                    Phone number:
+                  </label>
+                  <span>{company.phoneNumber}</span>
+                </div>
+                <div className="col-span-2 grid grid-cols-4 justify-start">
+                  <label
+                    className="font-semibold col-span-1"
+                    htmlFor="">
+                    Address:
+                  </label>
+                  <span className="col-span-3">{company.address}</span>
+                </div>
+                <div className="col-span-2 grid grid-cols-4 justify-start">
+                  <label
+                    className="font-semibold col-span-1"
+                    htmlFor="">
+                    Description:
+                  </label>
+                  <div
+                    className=" col-span-3"
+                    dangerouslySetInnerHTML={{
+                      __html: company?.description || '',
+                    }}
+                  />
+                </div>
               </div>
+
+              <p
+                onClick={() => setIsOpenModalAddEditCompany(true)}
+                className="absolute top-2 right-2 flex items-center gap-2 px-3 py-1.5 bg-slate-200 rounded-md cursor-pointer">
+                <HiOutlinePencilAlt /> Edit company
+              </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 text-sm g">
-              <div className="grid grid-cols-2 justify-start">
-                <label
-                  className="font-semibold"
-                  htmlFor="">
-                  Field of activity:
-                </label>
-                <span>{company.fieldOfActivity}</span>
-              </div>
+            <div className="relative bg-white p-4 mt-4 shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] rounded-lg flex flex-col">
+              <h4 className="text-lg font-semibold">Employers</h4>
 
-              <div className="grid grid-cols-2 justify-start">
-                <label
-                  className="font-semibold"
-                  htmlFor="">
-                  Scale:
-                </label>
-                <span>{company.scale}</span>
-              </div>
-
-              <div className="grid grid-cols-2 justify-start ">
-                <label
-                  className="font-semibold"
-                  htmlFor="">
-                  Website:
-                </label>
-                <a
-                  target="_blank"
-                  href={company.website ? company.website : ''}
-                  className="break-words text-blue-600">
-                  {company.website ? company.website : '--'}
-                </a>
-              </div>
-              <div className="grid grid-cols-2 justify-start">
-                <label
-                  className="font-semibold"
-                  htmlFor="">
-                  Email:
-                </label>
-                <span>{company.email}</span>
-              </div>
-
-              <div className="grid grid-cols-2 justify-start">
-                <label
-                  className="font-semibold"
-                  htmlFor="">
-                  Phone number:
-                </label>
-                <span>{company.phoneNumber}</span>
-              </div>
-              <div className="col-span-2 grid grid-cols-4 justify-start">
-                <label
-                  className="font-semibold col-span-1"
-                  htmlFor="">
-                  Address:
-                </label>
-                <span className="col-span-3">{company.address}</span>
-              </div>
-              <div className="col-span-2 grid grid-cols-4 justify-start">
-                <label
-                  className="font-semibold col-span-1"
-                  htmlFor="">
-                  Description:
-                </label>
-                <div
-                  className=" col-span-3"
-                  dangerouslySetInnerHTML={{
-                    __html: company?.description || '',
-                  }}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                {company.users?.map((item: any, index: number) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 rounded-md border border-slate-200 flex gap-2 items-center ">
+                    <img
+                      className="h-14 w-14 rounded-full border border-slate-200 object-cover"
+                      src={item.avatarUrl || avatar_default}
+                      alt=""
+                    />
+                    <div className="flex flex-col">
+                      <h4 className="font-medium">
+                        {item.firstName + ' ' + item.lastName}
+                      </h4>
+                      <div className="flex flex-col font-medium text-[13px]">
+                        <span>Email: {item.email}</span>
+                        <span>Phone: {item.phoneNumber}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-
-            <p
-              onClick={() => setIsOpenModalAddEditCompany(true)}
-              className="absolute top-2 right-2 flex items-center gap-2 px-3 py-1.5 bg-slate-200 rounded-md cursor-pointer">
-              <HiOutlinePencilAlt /> Edit company
-            </p>
-          </div>
+          </>
         )}
       </div>
 

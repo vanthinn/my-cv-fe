@@ -1,5 +1,5 @@
 import { Action, Thunk, action, persist, thunk } from "easy-peasy";
-import { applyJob, createJob, deleteJobApply, getAllJobApply, getAllJobOffer, getJoBApplyByJobId, getJobById, updateJob, updateStatusJobApply } from "../../services/job.service";
+import { applyJob, createJob, deleteJobApply, deleteJobOffer, getAllJobApply, getAllJobOffer, getJoBApplyByJobId, getJobById, updateJob, updateStatusJobApply } from "../../services/job.service";
 import { IRecruitmentRequest } from "../../types/IRecruitment";
 
 export interface IJobModel {
@@ -51,6 +51,12 @@ export interface IJobModel {
     isUpdateStatusJobApplySuccess: boolean;
     setIsUpdateStatusJobApplySuccess: Action<IJobModel, boolean>;
     updateStatusJobApply: Thunk<IJobModel, { id: string, status: string }>;
+
+    //deleteJobOffer
+    isDeleteJobOfferSuccess: boolean;
+    setIsDeleteJobOfferSuccess: Action<IJobModel, boolean>;
+    deleteJobOffer: Thunk<IJobModel, string>;
+
 }
 
 export const jobModel: IJobModel = persist({
@@ -207,6 +213,22 @@ export const jobModel: IJobModel = persist({
             })
             .catch((error) => {
                 actions.setIsUpdateStatusJobApplySuccess(false)
+                actions.setMessageErrorJob(error?.response?.data?.message)
+            });
+    }),
+
+    isDeleteJobOfferSuccess: true,
+    setIsDeleteJobOfferSuccess: action((state, payload) => {
+        state.isDeleteJobOfferSuccess = payload;
+    }),
+    deleteJobOffer: thunk(async (actions, payload) => {
+        return deleteJobOffer(payload)
+            .then(async (res) => {
+                actions.setIsDeleteJobOfferSuccess(true)
+                return res;
+            })
+            .catch((error) => {
+                actions.setIsDeleteJobOfferSuccess(false)
                 actions.setMessageErrorJob(error?.response?.data?.message)
             });
     }),

@@ -21,10 +21,12 @@
     "@mui/x-date-pickers": "^7.2.0",
     "axios": "^1.6.8",
     "dayjs": "^1.11.10",
+    "dom-to-image": "^2.6.0",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "easy-peasy": "^6.0.4",
     "html-to-draftjs": "^1.5.0",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "i": "^0.3.7",
     "jspdf": "^2.5.1",
@@ -43,6 +45,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/dom-to-image": "^2.6.7",
     "@types/draft-js": "^0.11.18",
     "@types/draftjs-to-html": "^0.8.4",
     "@types/html-to-draftjs": "^1.4.3",

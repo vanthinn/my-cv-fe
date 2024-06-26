@@ -25,7 +25,13 @@ interface Props {
 const schema = yup.object().shape({
   jobTitle: yup.string().required('Job title is required'),
   salary: yup.string().required('Salary is required'),
-  deadline: yup.string().required('Deadline is required'),
+  deadline: yup
+    .string()
+    .required('Deadline is required')
+    .test('is-future-date', 'Deadline must be in the future', function (value) {
+      const inputDate = new Date(value)
+      return inputDate > new Date()
+    }),
   description: yup.string().required('Description is required'),
   jobType: yup.string().required('Job type is required'),
   experience: yup.string().required('Experience is required'),
@@ -132,7 +138,9 @@ const ModalAddEditJob: FC<Props> = ({
                 leaveTo="opacity-0 scale-95">
                 <Dialog.Panel className="relative w-full max-w-[700px] max-h-[600px]  overflow-y-auto overflow-hidden flex flex-col transform  rounded-xl bg-white p-4 text-left align-middle shadow-xl transition-all">
                   <div className="flex flex-col gap-2 relative">
-                    <h2 className="m-auto text-xl font-semibold">Add new job</h2>
+                    <h2 className="m-auto text-xl font-semibold">
+                      {data ? 'Edit' : 'Add new'} job
+                    </h2>
                     <span
                       className="absolute top-0 right-0 text-xl text-gray-500 cursor-pointer"
                       onClick={() => setOpen(false)}>
